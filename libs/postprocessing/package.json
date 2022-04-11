@@ -1,0 +1,120 @@
+{
+  "_args": [
+    [
+      "postprocessing@5.3.2",
+      "D:\\fabu\\three_tb\\small_all\\未上\\作业\\Threejs按钮加线条背景\\资料\\animated-mesh-lines-master"
+    ]
+  ],
+  "_from": "postprocessing@5.3.2",
+  "_id": "postprocessing@5.3.2",
+  "_inBundle": false,
+  "_integrity": "sha512-FGDO6GakCb4qDOm2Mt+zFsDRzEI2/v2RjMsgbS1VXEOw+q4kDt0CUu9I4JCQhqysOgpJUcrbgRu/N+a0upRvyw==",
+  "_location": "/postprocessing",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "postprocessing@5.3.2",
+    "name": "postprocessing",
+    "escapedName": "postprocessing",
+    "rawSpec": "5.3.2",
+    "saveSpec": null,
+    "fetchSpec": "5.3.2"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/postprocessing/-/postprocessing-5.3.2.tgz",
+  "_spec": "5.3.2",
+  "_where": "D:\\fabu\\three_tb\\small_all\\未上\\作业\\Threejs按钮加线条背景\\资料\\animated-mesh-lines-master",
+  "author": {
+    "name": "Raoul van Rüschen",
+    "email": "vanruesc@outlook.de"
+  },
+  "ava": {
+    "failFast": true,
+    "files": [
+      "test/**/*.js"
+    ]
+  },
+  "bugs": {
+    "url": "https://github.com/vanruesc/postprocessing/issues"
+  },
+  "description": "A post processing library that provides the means to implement image filter effects for three.js.",
+  "devDependencies": {
+    "@babel/core": "7.x.x",
+    "@babel/preset-env": "7.x.x",
+    "ava": "0.x.x",
+    "cpx": "1.x.x",
+    "cross-env": "5.x.x",
+    "dat.gui": "0.x.x",
+    "delta-controls": "2.x.x",
+    "esdoc": "1.x.x",
+    "esdoc-standard-plugin": "1.x.x",
+    "eslint": "5.x.x",
+    "eslint-config-delta": "0.x.x",
+    "inline-import": "1.x.x",
+    "math-ds": "1.x.x",
+    "rimraf": "2.x.x",
+    "rollup": "0.x.x",
+    "rollup-plugin-babel": "4.x.x",
+    "rollup-plugin-babel-minify": "6.x.x",
+    "rollup-plugin-commonjs": "9.x.x",
+    "rollup-plugin-node-resolve": "3.x.x",
+    "rollup-plugin-string": "2.x.x",
+    "synthetic-event": "0.x.x",
+    "three": "0.99.x",
+    "three-demo": "3.x.x",
+    "three-gltf-loader": "1.99.x"
+  },
+  "eslintConfig": {
+    "extends": "delta"
+  },
+  "files": [
+    "src",
+    "build"
+  ],
+  "homepage": "https://github.com/vanruesc/postprocessing",
+  "keywords": [
+    "2d",
+    "3d",
+    "rendering",
+    "filter",
+    "effect",
+    "composer",
+    "pass",
+    "gpgpu",
+    "rtt",
+    "rendertexture",
+    "rendertarget"
+  ],
+  "license": "Zlib",
+  "main": "build/postprocessing.js",
+  "module": "src/index.js",
+  "name": "postprocessing",
+  "peerDependencies": {
+    "three": ">= 0.87.0 < 0.100.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vanruesc/postprocessing.git"
+  },
+  "scripts": {
+    "ava": "ava",
+    "build": "rollup -c",
+    "build:production": "cross-env NODE_ENV=production npm run build",
+    "deploy": "cpx demo/assets/** public/demo",
+    "doc": "rimraf public/docs && esdoc",
+    "lint": "npm run lint:lib && npm run lint:demo && npm run lint:test",
+    "lint:config": "eslint *.js",
+    "lint:demo": "eslint demo/src",
+    "lint:lib": "eslint src",
+    "lint:test": "eslint test",
+    "postpublish": "inline-import -r",
+    "prepack": "npm test && inline-import",
+    "pretest": "npm run lint && npm run build:production",
+    "test": "npm run ava"
+  },
+  "sideEffects": false,
+  "version": "5.3.2"
+}
