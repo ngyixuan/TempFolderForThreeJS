@@ -11,9 +11,10 @@ class Camera {
       0.01,
       20
     );
+    this.camera.rotation.y = 0;
     this.camera.position.x = 5;
-    this.camera.position.y = 2.7;
-    this.camera.position.z = 0;
+    this.camera.position.y = 4;
+    this.camera.position.z = 1;
     this.sketch.scene.add(this.camera);
 
     return this.camera;

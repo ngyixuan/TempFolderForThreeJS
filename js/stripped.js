@@ -1,7 +1,12 @@
 import * as THREE from "../libs/three.js/build/three.module.js";
-// import * as TWEEN from "../libs/TweenJS-1.0.0/lib/tweenjs.js";
+// import * as TWEEN from "../libs/tween.js";
+// import * as TWEEN from "../node_modules/@tweenjs/tween.js/dist/tween.amd.js";
+// import * as TWEEN from "../node_modules/@tweenjs/tween.js/tween.amd.js";
+// import * as TWEEN from "../node_modules/@tweenjs/tween.js/tween.amd.js";
+// import * as TWEEN from "../node_modules/@tweenjs/tween.js/tween.amd.js";
+import { TWEEN } from "../libs/three/examples/jsm/libs/tween.module.min.js";
 import { GLTFLoader } from "../libs/three.js/src/jsm/loaders/GLTFLoader.js";
-
+// var TWEEN = require("@tweenjs/tween.js");
 import gui from "./components/gui.js";
 import Scene from "./components/scene.js";
 import Renderer from "./components/renderer.js";
@@ -11,6 +16,10 @@ import Lights from "./components/lights.js";
 import Events from "./components/events.js";
 import Animator from "./components/animator.js";
 import { Object3D } from "../libs/three.js/src/core/Object3D.js";
+
+import { TweenLite } from "../libs/gsap/TweenLite.js";
+import Annotations from "./partials/Annotations.js";
+import DomEvents from "./partials/domevents.js";
 
 class Sketch {
   constructor() {
@@ -39,6 +48,8 @@ class Sketch {
   init() {
     const gltfLoader = new GLTFLoader();
     gltfLoader.load("./models/scene.gltf", (gltf) => {
+      // this.defaultCamera.position.x = 2;
+      // console.log(this.defaultCamera);
       // STAGE
       this.stage = gltf.scene;
       this.stage.position.x = 0;
@@ -46,58 +57,99 @@ class Sketch {
       this.scene.add(this.stage);
     });
 
+    console.log(this.defaultCamera);
+
     document.getElementById("main").appendChild(this.renderer.domElement);
+
+    let domEvents, annotationsGroup;
+
+    domEvents = new DomEvents.DomEvents(
+      this.defaultCamera,
+      this.renderer.domElement
+    );
+    annotationsGroup = new THREE.Group();
+    let hovering = 0;
+    const annotations = new Annotations("main");
+    const canvasContainer = document.getElementById("main");
+    annotations.createTHREEAnnotations(annotationsGroup);
+    this.scene.add(annotationsGroup);
+    annotationsGroup.children.forEach((sprite) => {
+      let initialScale = sprite.scale.x;
+      domEvents.addEventListener(sprite, "mouseover", function (event) {
+        event.stopPropagation();
+        hovering++;
+        canvasContainer.style.cursor = "pointer";
+        console.log("clicked");
+        sprite.scale.x = sprite.scale.y = sprite.scale.z = initialScale * 1.5;
+      });
+      domEvents.addEventListener(sprite, "mouseout", function (event) {
+        event.stopPropagation();
+        if (hovering === 1) {
+          canvasContainer.style.cursor = "default";
+        }
+        hovering--;
+        sprite.scale.x = sprite.scale.y = sprite.scale.z = initialScale;
+      });
+      domEvents.addEventListener(sprite, "click", function (e) {
+        console.log(e);
+        sprite.callback();
+      });
+    });
 
     this.animator.animate();
   }
-  addObjects() {
-    console.log("clicked");
-    const target = new Object3D();
-    let position = {
-      x: (target.position.x = 0),
-      y: (target.position.y = 2),
+
+  animateCamera(sketch) {
+    let that = this;
+    let angel = Math.PI / 5;
+    let newPos = {
+      x: 2,
+      y: 1,
+      z: 2,
     };
-    // target.position.x = 0;
-    // target.position.y = 2;
-    this.scene.add(target);
-    // this.defaultCamera.lookAt(target.position);
-    let tween = new TWEEN.Tween(this.defaultCamera.position).to(
-      target.position,
-      3000
-    );
-    tween.start();
+    console.log(sketch.defaultCamera);
+    let oldCameraPosition = sketch.defaultCamera.position;
+    // let oldCameraPosition = {
+    //   x: sketch.defaultCamera.position.x + Math.cos(angel) * 10,
+    //   y: sketch.defaultCamera.position.y,
+    //   z: sketch.defaultCamera.position.z + Math.sin(angel) * 10,
+    // };
+    console.log(oldCameraPosition);
 
-    // this.animator.animate();
-    // let tween1 = new TWEEN.Tween(this.controls.target).to(target.position, 3000)
+    let tween1 = new TWEEN.Tween(oldCameraPosition).to(newPos, 3000);
+    tween1.start();
+    tween1.onComplete(function () {
+      console.log("tween--finish");
+    });
 
-    // SET UP CURVE FOR CAMERA TO FOLLOW
-    // const bezier = new THREE.CubicBezierCurve3(
-    //   new THREE.Vector3(-0.5, 0.55, 0),
-    //   new THREE.Vector3(-0.5, 0.1, 0),
-    //   new THREE.Vector3(-0.45, 0.1, 0),
-    //   new THREE.Vector3(0, 0.1, 0)
-    // );
+    // let tween = new TWEEN.Tween({
+    //   phi: sketch.controls.getPolarAngle(),
+    //   theta: sketch.controls.getAzimuthalAngle(),
+    // }).to({ phi: Math.PI / 2, theta: Math.PI / 2 }, 3000);
+    // tween.easing(TWEEN.Easing.Cubic.InOut);
+    // tween.onUpdate(function () {
+    //   sketch.controls.setAngle(this.phi, this.theta);
+    // });
 
-    // // SET UP TARGET
-    // const target = new Object3D();
-    // target.position.x = 45;
-    // target.position.y = 30;
-    // this.scene.add(target);
+    // sketch.defaultCamera.lookAt(sketch.stage);
+    // console.log(oldCameraPosition);
 
-    // target = this.stage;
-    // target.position = this.stage.position;
-    // this.scene.add(target);
+    // console.log(tween1);
+    // tween1.onUpdate(function () {
+    //   sketch.defaultCamera.position.x = pos.x;
+    //   // oldCameraPosition.position.y = 6;
+    //   // oldCameraPosition.position.z = 0;
+    //   console.log(sketch.defaultCamera.position.x);
+    // }, 3000);
+    // console.log(newPos);
 
-    // this.animator.add(() => {
-    //   const playhead = this.settings.playhead;
+    // tween1.easing(TWEEN.Easing.Sinusoidal.InOut);
+    // console.log(tween1);
 
-    // UPDATE TARGET
-    // target.position.x = Math.sqrt(playhead) - 0.5;
-
-    // UPDATE CAMERA
-    // this.defaultCamera.lookAt(stage.position);
-    // const pos = bezier.getPoint(playhead);
-    // this.defaultCamera.position.set(pos.x, pos.y, pos.z);
+    // console.log(tween1);
+    // TWEEN.update();
+    // tween1.onComplete(function () {
+    //   console.log("tween--finish");
     // });
   }
 }

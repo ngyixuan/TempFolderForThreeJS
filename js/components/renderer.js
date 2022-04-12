@@ -1,5 +1,5 @@
 import * as THREE from "../../libs/three.js/build/three.module.js";
-
+import { TWEEN } from "../../libs/three/examples/jsm/libs/tween.module.min.js";
 class Renderer {
   constructor(sketch, settings) {
     this.sketch = sketch;
