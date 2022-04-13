@@ -1,287 +1,174 @@
-const radius = 4;
-var scene, camera, renderer = [];
-const origin = new THREE.Vector3();
-const direction = new THREE.Vector3();
-const raycaster = new THREE.Raycaster();
-const geometry = new THREE.SphereBufferGeometry(radius, 32, 32, 0, 3.2, 4, 2.1);
-const material = new THREE.MeshBasicMaterial({
-  wireframe: true,
-  visible: false
-});
-const sphere = new THREE.Mesh(geometry, material);
-sphere.position.z = 2;
-const COLORS = ['#FFFAFF', '#0A2463', '#3E92CC', '#723bb7', '#efd28e', '#3f9d8c'].map((col) => new THREE.Color(col));
-const STATIC_PROPS = {
-  transformLineMethod: p => p,
-};
+import * as THREE from "../libs/three/build/three.module.js";
 
+import * as GeometryUtils from "../libs/three.js/src/jsm/utils/GeometryUtils.js";
 
+// import * as THREE from '../libs/three/build/three.module.js';
+
+// import Stats from "../libs/three.js/src/jsm/libs/stats.module.js";
+// import { GUI } from "../libs/three.js/src/jsm/libs/lil-gui.module.min.js";
+
+// import { OrbitControls } from "./libs/jsm/three.js/src/jsm/controls/OrbitControls.js";
+// import { GLTFLoader } from "./jsm/loaders/GLTFLoader.js";
+// import { EffectComposer } from "./jsm/postprocessing/EffectComposer.js";
+// import { RenderPass } from "./jsm/postprocessing/RenderPass.js";
+// import { UnrealBloomPass } from "./jsm/postprocessing/UnrealBloomPass.js";
+
+let mouseX = 0,
+  mouseY = 0;
+
+let windowHalfX = window.innerWidth / 2;
+let windowHalfY = window.innerHeight / 2;
+
+let camera, scene, renderer;
+
+init();
+animate();
 
 function init() {
+  camera = new THREE.PerspectiveCamera(
+    33,
+    window.innerWidth / window.innerHeight,
+    1,
+    10000
+  );
+  camera.position.z = 1000;
 
-  //camera
-  camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-  camera.position.z = 5;
-
-  //scene
   scene = new THREE.Scene();
 
-  //renderer
-  renderer = new THREE.WebGLRenderer();
-  //set the size of the renderer
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
+  document.getElementById("main").appendChild(renderer.domElement);
 
-  //add the renderer to the html document body
-  document.querySelector('.line').appendChild(renderer.domElement);
-}
+  //
 
-function addLine() {
-  // V1 Regular and symetric lines ---------------------------------------------
-  // i += 0.1;
-  // let a = i;
-  // let y = 12;
-  // let incrementation = 0.1;
-  // V2 ---------------------------------------------
-  let incrementation = 0.1;
-  let y = (Math.random() * (radius * 1.8 - (-radius * 0.6)));
-  // let y = getRandomFloat(-radius * 0.6, radius * 1.8);
-  let a = Math.PI * (-25) / 180;
-  let aMax = Math.PI * (200) / 180;
+  const hilbertPoints = GeometryUtils.hilbert3D(
+    new THREE.Vector3(0, 0, 0),
+    200.0,
+    1,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  );
 
-  const points = [];
-  while (a < aMax) {
-    a += 0.2;
-    y -= incrementation;
-    //   origin.position.x = radius * Math.cos(a);
-    //   origin.position.y = y;
-    //   origin.position.z = radius * Math.sin(a);
+  const geometry1 = new THREE.BufferGeometry();
 
-    origin.set(radius * Math.cos(a), y, radius * Math.sin(a));
-    direction.set(-origin.x, 0, -origin.z);
-    direction.normalize();
-    raycaster.set(origin, direction);
+  const subdivisions = 6;
 
-    // save the points
-    const intersect = raycaster.intersectObject(sphere, true);
-    if (intersect.length) {
-      points.push(intersect[0].point.x, intersect[0].point.y, intersect[0].point.z);
-    }
+  let vertices = [];
+  let colors1 = [];
+  let colors2 = [];
+  let colors3 = [];
+
+  const point = new THREE.Vector3();
+  const color = new THREE.Color();
+
+  const spline = new THREE.CatmullRomCurve3(hilbertPoints);
+
+  for (let i = 0; i < hilbertPoints.length * subdivisions; i++) {
+    const t = i / (hilbertPoints.length * subdivisions);
+    spline.getPoint(t, point);
+
+    vertices.push(point.x, point.y, point.z);
+
+    color.setHSL(0.6, 1.0, Math.max(0, -point.x / 200) + 0.5);
+    colors1.push(color.r, color.g, color.b);
+
+    color.setHSL(0.9, 1.0, Math.max(0, -point.y / 200) + 0.5);
+    colors2.push(color.r, color.g, color.b);
+
+    color.setHSL(i / (hilbertPoints.length * subdivisions), 1.0, 0.5);
+    colors3.push(color.r, color.g, color.b);
   }
 
-  if (points.length === 0) return;
+  geometry1.addAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(vertices, 3)
+  );
 
-  if (Math.random() > 0.5) {
-    // Low lines
-    addLineGenerator({
-      visibleLength: (Math.random() * (0.2 - 0.01)) + 0.01,
-      points,
-      speed: (Math.random() * (0.008 - 0.003)) + 0.003,
-      color: THREE.COLORS[Math.floor(Math.random() * ((THREE.COLORS.length - 1) - 0 + 1)) + min],
+  geometry1.addAttribute("color", new THREE.Float32BufferAttribute(colors1, 3));
 
+  //
 
+  // Create lines and add to scene
 
-      width: (Math.random() * (0.1 - 0.01)) + 0.01
-    });
-  } else {
-    // Fast lines
-    addLineGenerator({
-      visibleLength: (Math.random() * (0.2 - 0.01)) + 0.01,
-      points,
-      speed: (Math.random() * (0.1 - 0.01)) + 0.01,
-      color: COLORS[0],
-      width: (Math.random() * (0.1 - 0.01)) + 0.01,
-    });
+  var material = new THREE.LineBasicMaterial({
+    color: 0xffffff,
+    vertexColors: true,
+  });
+
+  let line, p;
+  const scale = 0.3,
+    d = 225;
+
+  const parameters = [[material, scale * 1.5, [-d, -d / 2, 0], geometry1]];
+
+  for (let i = 0; i < parameters.length; i++) {
+    p = parameters[i];
+    line = new THREE.Line(p[3], p[0]);
+    line.scale.x = line.scale.y = line.scale.z = p[1];
+    line.position.x = p[2][0];
+    line.position.y = p[2][1];
+    line.position.z = p[2][2];
+    scene.add(line);
   }
 
+  //
 
-}
-var i = 0;
-var lines = [];
-var nbrOfLines = -1;
+  document.body.style.touchAction = "none";
+  document.body.addEventListener("pointermove", onPointerMove);
 
-var update = update.bind(this);
-var start = start.bind(this);
-var stop = stop.bind(this);
+  //
 
-var frequency = frequency;
-var lineStaticProps = lineProps;
-
-var isStarted = false;
-
-
-
-
-
-function start() {
-  this.isStarted = true;
+  window.addEventListener("resize", onWindowResize);
 }
 
-function stop(callback) {
-  this.isStarted = false;
-  // TODO callback when all lines are hidden
+function onWindowResize() {
+  windowHalfX = window.innerWidth / 2;
+  windowHalfY = window.innerHeight / 2;
+
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function addLineGenerator(props) {
-  const line = new AnimatedMeshLine(Object.assign({}, this.lineStaticProps, props));
-  lines.push(line);
-  this.add(line);
-  this.nbrOfLines++;
-  return line;
+//
+
+function onPointerMove(event) {
+  if (event.isPrimary === false) return;
+
+  mouseX = event.clientX - windowHalfX;
+  mouseY = event.clientY - windowHalfY;
 }
 
-function update() {
-  // Add lines randomly
-  if (this.isStarted && Math.random() < this.frequency) this.addLine();
+//
 
-  // Update current Lines
-  for (this.i = this.nbrOfLines; this.i >= 0; this.i--) {
-    this.lines[this.i].update();
+function animate() {
+  requestAnimationFrame(animate);
+  render();
+}
+
+function render() {
+  camera.position.x += (mouseX - camera.position.x) * 0.05;
+  camera.position.y += (-mouseY + 200 - camera.position.y) * 0.05;
+
+  camera.lookAt(scene.position);
+
+  const time = Date.now() * 0.0005;
+
+  for (let i = 0; i < scene.children.length; i++) {
+    const object = scene.children[i];
+
+    // if (object.isLine) {
+    //   object.rotation.y = time * (i % 2 ? 1 : -1);
+    // }
   }
 
-  // Filter and remove died lines
-  const filteredLines = [];
-  for (this.i = this.nbrOfLines; this.i >= 0; this.i--) {
-    if (this.lines[this.i].isDied()) {
-      this.removeLine(this.lines[this.i]);
-    } else {
-      filteredLines.push(this.lines[this.i]);
-    }
-  }
-  this.lines = filteredLines;
+  renderer.render(scene, camera);
 }
-
-width = 0.1,
-  speed = 0.01,
-  visibleLength = 0.5,
-  color = new Color('#000000'),
-  opacity = 1,
-  position = new Vector3(0, 0, 0),
-
-  // Array of points already done
-  points = false,
-  // Params to create the array of points
-  length = 2,
-  nbrOfPoints = 3,
-  orientation = new Vector3(1, 0, 0),
-  turbulence = new Vector3(0, 0, 0),
-  transformLineMethod = false,
-
-  function render() {
-    //get the frame
-    requestAnimationFrame(render);
-
-    //render the scene
-    renderer.render(scene, camera);
-    addLine();
-
-  }
-
-let linePoints = [];
-if (!points) {
-  const currentPoint = new Vector3();
-  // The size of each segment oriented in the good directon
-  const segment = orientation.normalize().multiplyScalar(length / nbrOfPoints);
-  linePoints.push(currentPoint.clone());
-  for (let i = 0; i < nbrOfPoints - 1; i++) {
-    // Increment the point depending to the orientation
-    currentPoint.add(segment);
-    // Add turbulence to the current point
-    linePoints.push(currentPoint.clone().set(
-      currentPoint.x + getRandomFloat(-turbulence.x, turbulence.x),
-      currentPoint.y + getRandomFloat(-turbulence.y, turbulence.y),
-      currentPoint.z + getRandomFloat(-turbulence.z, turbulence.z),
-    ));
-  }
-  // Finish the curve to the correct point without turbulence
-  linePoints.push(currentPoint.add(segment).clone());
-  // * ******************************
-  // * Smooth the line
-  // TODO 3D spline curve https://math.stackexchange.com/questions/577641/how-to-calculate-interpolating-splines-in-3d-space
-  // TODO https://github.com/mrdoob/three.js/blob/master/examples/webgl_geometry_nurbs.html
-  const curve = new SplineCurve(linePoints);
-  linePoints = new Geometry().setFromPoints(curve.getPoints(50));
-} else {
-  linePoints = points;
-}
-
-
-
-// * ******************************
-// * Create the MeshLineGeometry
-const line = new MeshLine();
-line.setGeometry(linePoints, transformLineMethod);
-const geometry = line.geometry;
-
-// * ******************************
-// * Create the Line Material
-// dashArray - the length and space between dashes. (0 - no dash)
-// dashRatio - defines the ratio between that is visible or not (0 - more visible, 1 - more invisible).
-// dashOffset - defines the location where the dash will begin. Ideal to animate the line.
-// DashArray: The length of a dash = dashArray * length.
-// Here 2 mean a cash is 2 time longer that the original length
-const dashArray = 2;
-// Start to 0 and will be decremented to show the dashed line
-const dashOffset = 0;
-// The ratio between that is visible and other
-const dashRatio = 1 - (visibleLength * 0.5); // Have to be between 0.5 and 1.
-
-const material = new MeshLineMaterial({
-  lineWidth: width,
-  dashArray,
-  dashOffset,
-  dashRatio, // The ratio between that is visible or not for each dash
-  opacity,
-  transparent: true,
-  depthWrite: false,
-  color,
-});
-
-// * ******************************
-// * Init
-super(geometry, material);
-this.position.copy(position);
-
-this.speed = speed;
-this.voidLength = dashArray * dashRatio; // When the visible part is out
-this.dashLength = dashArray - this.voidLength;
-
-this.dyingAt = 1;
-this.diedAt = this.dyingAt + this.dashLength;
-
-// Bind
-this.update = this.update.bind(this);
-
-
-
-
-function AnimatedUpdate() {
-  // Increment the dash
-  this.material.uniforms.dashOffset.value -= this.speed;
-
-  // TODO make that into a decorator
-  // Reduce the opacity then the dash start to desapear
-  if (this.isDying()) {
-    this.material.uniforms.opacity.value = 0.9 + ((this.material.uniforms.dashOffset.value + 1) / this.dashLength);
-  }
-}
-
-function isDied() {
-  return this.material.uniforms.dashOffset.value < -this.diedAt;
-}
-
-function isDying() {
-  return this.material.uniforms.dashOffset.value < -this.dyingAt;
-}
-
-init()
-addLine()
-render()
-console.log("loading line")
-
-// class CustomLineGenerator extends LineGenerator {
-
-// }
-// const lineGenerator = new CustomLineGenerator({
-//   frequency: 0.99,
-// }, STATIC_PROPS);
-// engine.add(lineGenerator);

@@ -12,7 +12,7 @@ class Renderer {
     this.renderer.physicallyCorrectLights = true;
     this.renderer.outputEncoding = THREE.sRGBEncoding;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-
+    this.renderer.toneMapping = THREE.ReinhardToneMapping;
     this.renderer.update = this.update.bind(this.sketch);
 
     return this.renderer;
