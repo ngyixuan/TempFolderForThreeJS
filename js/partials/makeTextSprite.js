@@ -1,6 +1,61 @@
 import * as THREE from "../../libs/three.js/build/three.module.js";
+import { FontLoader } from "../../libs/three/examples/jsm/loaders/FontLoader.js";
+import { TextGeometry } from "../../libs/three/examples/jsm/geometries/TextGeometry.js";
+// var sprite;
+// var gFont, sprite;
+// var fontLoader = new FontLoader();
+// var material = new THREE.MeshStandardMaterial();
+// fontLoader.load(
+//   "../../libs/three.js/src/fonts/helvetiker_bold.typeface.json",
+//   function (font) {
+//     gFont = font;
+//     const textGeometery = new TextGeometry("Take Picture", {
+//       font: font,
+//       size: 0.5,
+//       height: 0.2,
+//       curveSegments: 12,
+//       bevelEnabled: true,
+//       bevelThickness: 0.03,
+//       bevelSize: 0.02,
+//       bevelOffset: 0,
+//       bevelSegments: 5,
+//     });
 
+//     sprite = new THREE.Mesh(textGeometery, material);
+//   }
+// );
 export default function makeTextSprite(message, parameters) {
+  let textGeometry;
+  let sprite;
+  let fontLoader = new FontLoader();
+  let material = new THREE.MeshStandardMaterial();
+  material.roughness = 0.4;
+
+  fontLoader.load(
+    "./libs/three/examples/fonts/helvetiker_bold.typeface.json",
+    function (font) {
+      const textGeometry = new TextGeometry("Take Picture", {
+        font: font,
+        size: 0.5,
+        height: 0.2,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 0.03,
+        bevelSize: 0.02,
+        bevelOffset: 0,
+        bevelSegments: 5,
+      });
+
+      console.log(textGeometry);
+      sprite = new THREE.Mesh(textGeometry, material);
+      console.log(sprite);
+    }
+  );
+
+  sprite = new THREE.Mesh(textGeometry, material);
+
+  // console.log(sprite);
+
   // if (parameters === undefined) parameters = {};
   // const fontface = parameters.hasOwnProperty("fontFace")
   //   ? parameters["fontFace"]
@@ -20,14 +75,12 @@ export default function makeTextSprite(message, parameters) {
   // const textColor = parameters.hasOwnProperty("textColor")
   //   ? parameters["textColor"]
   //   : { r: 0, g: 0, b: 0, a: 1.0 };
-
   // const canvas = document.createElement("canvas");
   // const context = canvas.getContext("2d");
   // const offset = 32;
   // canvas.height = offset * 2;
   // canvas.width = offset * 2;
   // const radius = 5;
-
   // context.fillStyle =
   //   "rgba(" +
   //   backgroundColor.r +
@@ -41,7 +94,6 @@ export default function makeTextSprite(message, parameters) {
   // context.beginPath();
   // context.arc(offset, offset, radius, 0, 2 * Math.PI);
   // context.fill();
-
   // context.strokeStyle =
   //   "rgba(" +
   //   borderColor.r +
@@ -56,7 +108,6 @@ export default function makeTextSprite(message, parameters) {
   // context.beginPath();
   // context.arc(offset, offset, radius, 0, 2 * Math.PI);
   // context.stroke();
-
   // context.fillStyle =
   //   "rgba(" +
   //   textColor.r +
@@ -71,25 +122,21 @@ export default function makeTextSprite(message, parameters) {
   // context.textAlign = "center";
   // context.textBaseline = "middle";
   // context.fillText(message, offset, offset);
-
-  var cubeGeo = new THREE.BoxGeometry(1, 1, 1);
-  var cubeMaterial = new THREE.MeshBasicMaterial({
-    color: 0x00ee00,
-  });
-  const sprite = new THREE.Mesh(cubeGeo, cubeMaterial);
-
+  // var cubeGeo = new THREE.BoxGeometry(1, 1, 1);
+  // var cubeMaterial = new THREE.MeshBasicMaterial({
+  //   color: 0x00ee00,
+  // });
+  // const sprite = new THREE.Mesh(cubeGeo, cubeMaterial);
+  // textGeometery.center();
+  // text.position.y = 1;
   // scene.add(cubeMesh);
-
   // const texture = new THREE.Texture(canvas);
   // texture.needsUpdate = true;
-
   // const spriteMaterial = new THREE.SpriteMaterial({
   //   map: texture,
   //   depthTest: true,
   // });
   // const sprite = new THREE.Sprite(spriteMaterial);
-
   // sprite.center = new THREE.Vector2(0.5, 0.5 );
   // sprite.scale.set(2, 2, 2);
-  return sprite;
 }

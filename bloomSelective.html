@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>bloomPass</title>
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      #container {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <button onclick="getC()" style="position: absolute; top: 50px">getC</button>
+    <!-- <script src="js/three.min.js"></script> -->
+    <script src="./libs/three/examples/jsm/libs/tween.js"></script>
+    <!-- <script src="js/stats.min.js"></script> -->
+    <!-- <script src="js/OrbitControls.js"></script> -->
+    <!-- 后期处理js -->
+    <!--  -->
+    <!-- <script src="js/shaders/ConvolutionShader.js"></script> -->
+    <!-- <script> -->
+    <script type="module">
+      import * as THREE from "./libs/three/build/three.module.js";
+      import Stats from "./libs/three.js/src/jsm/libs/stats.module.js";
+      import { GUI } from "./libs/three.js/src/jsm/libs/dat.gui.module.js";
+      import { OrbitControls } from "./libs/three.js/src/jsm/controls/OrbitControls.js";
+      import { EffectComposer } from "./libs/three.js/src/jsm/postprocessing/EffectComposer.js"; // EffectComposer（效果组合器）对象
+      import { RenderPass } from "./libs/three.js/src/jsm/postprocessing/RenderPass.js"; // RenderPass/该通道在指定的场景和相机的基础上渲染出一个新场景
+      import { ShaderPass } from "./libs/three.js/src/jsm/postprocessing/ShaderPass.js"; // ShaderPass/使用该通道你可以传入一个自定义的着色器，用来生成高级的、自定义的后期处理通道
+      import { CopyShader } from "./libs/three.js/src/jsm/shaders/CopyShader.js"; // 传入了CopyShader着色器，用于拷贝渲染结果
+      import { BloomPass } from "./libs/three.js/src/jsm/postprocessing/BloomPass.js";
+      import { UnrealBloomPass } from "./libs/three.js/src/jsm/postprocessing/UnrealBloomPass.js"; // BloomPass/形成泛光的效果
+      // 需要用官方版本的tween.js
+      let container = document.getElementById("container");
+      let camera, scene, renderer;
+      let cubeGroup,
+        labelGroup = [];
+      let stats, controls;
+      let renderOrder = 1;
+      let bloomComposer = null;
+      init();
+      update();
+      function init() {
+        // scene
+        scene = new THREE.Scene();
+        // camera
+        let frustumSize = 150;
+        let aspect = container.clientWidth / container.clientHeight;
+        camera = new THREE.PerspectiveCamera(
+          45,
+          window.innerWidth / window.innerHeight,
+          1,
+          50000
+        );
+        camera.position.set(306, 1126, 7976);
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+        var ambientLight = new THREE.AmbientLight("#ffffff", 0.7); // offline
+        scene.add(ambientLight);
+        // renderer
+        renderer = new THREE.WebGLRenderer();
+        renderer.autoClear = false;
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+        renderer.render(scene, camera);
+        addCubes();
+        addBloomPass();
+        stats = new Stats();
+        container.appendChild(stats.dom);
+        controls = new OrbitControls(camera, renderer.domElement);
+        window.addEventListener("resize", onWindowResize, false);
+      }
+      function update() {
+        requestAnimationFrame(update);
+        controls.update();
+        stats.update();
+        // 渲染器清除颜色、深度或模板缓存. 此方法将颜色缓存初始化为当前颜色
+        renderer.clear();
+
+        if (bloomComposer) {
+          bloomComposer.render();
+        }
+        // 清除深度缓存
+        renderer.clearDepth();
+        camera.layers.set(0);
+        renderer.render(scene, camera);
+      }
+      // function getC() {
+      //   console.log(camera);
+      // }
+      function onWindowResize() {
+        let frustumSize = 200;
+        let aspect = container.clientWidth / container.clientHeight;
+        camera.left = (frustumSize * aspect) / -2;
+        camera.right = (frustumSize * aspect) / 2;
+        camera.top = frustumSize / 2;
+        camera.bottom = frustumSize / -2;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+      function addBloomPass() {
+        // RenderPass这个通道会渲染场景，但不会将渲染结果输出到屏幕上
+        const renderScene = new RenderPass(scene, camera);
+        const effectCopy = new ShaderPass(CopyShader); //传入了CopyShader着色器，用于拷贝渲染结果
+        effectCopy.renderToScreen = true;
+        // THREE.BloomPass(strength, kernelSize, sigma, Resolution)
+        // strength 定义泛光效果的强度，值越高，明亮的区域越明亮，而且渗入较暗区域的也就越多
+        // kernelSize 控制泛光的偏移量
+        // sigma 控制泛光的锐利程度，值越高，泛光越模糊
+        // Resolution 定义泛光的解析图，如果该值太低，结果的方块化就会越严重
+        const bloomPass = new BloomPass(2, 25, 4.0, 256); //BloomPass通道效果
+        //创建效果组合器对象，可以在该对象上添加后期处理通道，通过配置该对象，使它可以渲染我们的场景，并应用额外的后期处理步骤，在render循环中，使用EffectComposer渲染场景、应用通道，并输出结果。
+        bloomComposer = new EffectComposer(renderer);
+        bloomComposer.setSize(window.innerWidth, window.innerHeight);
+        bloomComposer.addPass(renderScene);
+        bloomComposer.addPass(bloomPass);
+        bloomComposer.addPass(effectCopy);
+        bloomComposer.render();
+      }
+      function addCubes() {
+        // 创建两个box， 将box进行layers进行分层是重要代码，camera默认渲染0层
+        let texture = new THREE.TextureLoader().load("./backav9.jpg");
+        let texture1 = new THREE.TextureLoader().load("./py.png");
+        var geometry1 = new THREE.BoxGeometry(400, 400, 400);
+        var material1 = new THREE.MeshBasicMaterial({
+          map: texture,
+        });
+        var cube1 = new THREE.Mesh(geometry1, material1);
+        // 重要代码，将当前创建的box分配到0层
+        cube1.layers.set(1);
+        cube1.position.set(1200, 0, 0);
+        scene.add(cube1);
+        var geometry2 = new THREE.BoxGeometry(400, 400, 400);
+        var material2 = new THREE.MeshBasicMaterial({
+          map: texture1,
+        });
+        var cube2 = new THREE.Mesh(geometry2, material2);
+        // 重要代码，将当前创建的box分配到1层
+        cube2.layers.set(0);
+        cube2.position.set(600, 0, 0);
+        scene.add(cube2);
+      }
+    </script>
+  </body>
+</html>
