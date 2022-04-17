@@ -27,6 +27,28 @@
       </nav>
       <canvas id="stage"></canvas>
     </div> -->
+    <video
+      id="video"
+      width="0"
+      height="0"
+      style="visibility: hidden; float: left"
+    >
+      Video stream not available.
+    </video>
+    <span class="ok">play</span>
     <script type="module" src="./js/showModel.js"></script>
+    <!-- <script>
+      video = document.getElementById("video");
+      canvas = document.getElementById("video_canvas");
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: false })
+        .then(function (stream) {
+          video.srcObject = stream;
+          video.play();
+        })
+        .catch(function (err) {
+          console.log("An error occured! " + err);
+        });
+    </script> -->
   </body>
 </html>

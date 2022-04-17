@@ -76,6 +76,7 @@ export default class Annotations {
       );
       sprite.callback = () => {
         annotationCallback(annotation.number, annotation.link);
+        return annotation.number;
       };
       // sprite.renderOrder = 1000 + i;
       scene.add(sprite);

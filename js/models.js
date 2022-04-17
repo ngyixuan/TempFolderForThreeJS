@@ -191,5 +191,5 @@ app.onHide((onComplete) => {
 $("#div_play").on("click", (e) => {
   // window.open("./show.html");
 
-  window.location.href = "./show.html";
+  window.location.href = "./showModel.html";
 });

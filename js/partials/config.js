@@ -3,7 +3,7 @@ import * as THREE from "../../libs/three.js/build/three.module.js";
 // function below triggers when an annotation is clicked
 export const annotationCallback = (number, link) => {
   console.log("You clicked annotation number ", number);
-  window.open(link, "_blank");
+  // window.open(link, "_blank");
   return false;
 };
 
@@ -21,18 +21,18 @@ export const annotations = [
   {
     number: 1,
     position: new THREE.Vector3(-3, 3, -3),
-    link: "http://www.baidu.com",
+    link: "",
   },
 
   {
     number: 2,
     position: new THREE.Vector3(0, 4, -3),
-    link: "http://www.expensive.toys/mandala/",
+    link: "",
   },
 
   {
     number: 3,
     position: new THREE.Vector3(3, 3, -3),
-    link: "http://www.expensive.toys/mandala/",
+    link: "",
   },
 ];

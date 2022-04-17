@@ -5,7 +5,9 @@ import { FontLoader } from "../libs/three/examples/jsm/loaders/FontLoader.js";
 import * as dat from "../libs/dat.gui/build/dat.gui.module.js";
 import { SpotLightHelper } from "../libs/three/src/helpers/SpotLightHelper.js";
 import { TextGeometry } from "../libs/three.js/src/jsm/geometries/TextGeometry.js";
-
+import { OBJLoader } from "../libs/three.js/src/jsm/loaders/OBJLoader.js";
+// import { FBXLoader } from "../libs/three/examples/jsm/loaders/FBXLoader.js";
+// import { DDSLoader } from "./libs/three.js/src/jsm/loaders/DDSLoader.js";
 import { TweenLite } from "../libs/gsap/TweenLite.js";
 import Annotations from "./partials/Annotations.js";
 import DomEvents from "./partials/domevents.js";
@@ -148,12 +150,14 @@ const canvasContainer = document.getElementById("puidu-webgl-output");
 annotations.createTHREEAnnotations(annotationsGroup);
 scene.add(annotationsGroup);
 annotationsGroup.children.forEach((sprite) => {
+  let toggle = false;
   let initialScale = sprite.scale.x;
   domEvents.addEventListener(sprite, "mouseover", function (event) {
     event.stopPropagation();
     hovering++;
     canvasContainer.style.cursor = "pointer";
     console.log("clicked");
+
     sprite.scale.x = sprite.scale.y = sprite.scale.z = initialScale * 1.5;
   });
   domEvents.addEventListener(sprite, "mouseout", function (event) {
@@ -167,9 +171,50 @@ annotationsGroup.children.forEach((sprite) => {
   domEvents.addEventListener(sprite, "click", function (e) {
     console.log(e);
     sprite.callback();
+    console.log(sprite.callback());
+    // console.log(annotation.number);
+
+    if (!toggle && sprite.callback() == 1) {
+      toggle = true;
+      scene.add(takePicMesh);
+    } else if (toggle && sprite.callback() == 1) {
+      scene.remove(takePicMesh);
+      toggle = false;
+    }
+    // console.log("true");
   });
 });
 
+var video;
+video = document.getElementById("video");
+const takePicPlanetexture = new THREE.VideoTexture(video);
+takePicPlanetexture.minFilter = THREE.LinearFilter;
+takePicPlanetexture.magFilter = THREE.LinearFilter;
+takePicPlanetexture.format = THREE.RGBFormat;
+
+const takePicPlaneGeo = new THREE.PlaneBufferGeometry(4, 3);
+const takePicPlanematerial = new THREE.MeshBasicMaterial({
+  map: takePicPlanetexture,
+  // side: THREE.DoubleSide,
+});
+
+const takePicMesh = new THREE.Mesh(takePicPlaneGeo, takePicPlanematerial);
+takePicMesh.position.x = -6;
+takePicMesh.rotation.x = 0.5;
+takePicMesh.rotation.y = 0.7;
+takePicMesh.rotation.z = -0.3;
+takePicMesh.position.y = 1;
+takePicMesh.position.z = -2;
+
+initWebcamInput();
+function initWebcamInput() {
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+      video.srcObject = stream;
+      video.play();
+    });
+  }
+}
 /**
  * Objects
  */
@@ -233,6 +278,21 @@ fontLoader.load(
   }
 );
 
+/**
+ * 模型
+ */
+// const url = "../models/swordCard.fbx";
+// const fbxloader = new THREE.FBXLoader();
+// fbxloader.load(url, function (loadedModel) {
+//   const textureLoader = new THREE.TextureLoader();
+//   //  const textureUrl = "../model/fbx/beats耳机/textures/beats_red.png";
+//   //  const textureNormal = textureLoader.load(textureUrl);
+//   mesh = loadedModel.children[0].clone();
+//   //  mesh.material.map = textureNormal;
+//   //  mesh.material.shininess = 15;
+//   //  console.log(loadedModel.children[0]);
+//   scene.add(mesh);
+// });
 window.addEventListener("resize", () => {
   // Update sizes
   sizes.width = window.innerWidth;
@@ -255,6 +315,8 @@ controls.update();
 /**
  * Animate
  */
+
+// videoTexture.needsUpdate = true;
 const clock = new THREE.Clock();
 
 const tick = () => {
@@ -268,6 +330,10 @@ const tick = () => {
   sphere.rotation.x = 0.15 * elapsedTime;
   cube.rotation.x = 0.15 * elapsedTime;
   torus.rotation.x = 0.15 * elapsedTime;
+
+  //update canvas
+  // var canvas_context = canvas.getContext("2d");
+  // canvas_context.drawImage(video, 0, 0, 320, 240);
 
   // Update controls
   controls.update();
