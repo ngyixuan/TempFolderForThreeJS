@@ -4,13 +4,15 @@ import { OrbitControls } from "../libs/three.js/src/jsm/controls/OrbitControls.j
 import { FontLoader } from "../libs/three/examples/jsm/loaders/FontLoader.js";
 import * as dat from "../libs/dat.gui/build/dat.gui.module.js";
 import { SpotLightHelper } from "../libs/three/src/helpers/SpotLightHelper.js";
+import { RectAreaLightUniformsLib } from "../libs/three.js/src/jsm/lights/RectAreaLightUniformsLib.js";
 import { TextGeometry } from "../libs/three.js/src/jsm/geometries/TextGeometry.js";
 import { OBJLoader } from "../libs/three.js/src/jsm/loaders/OBJLoader.js";
-// import { FBXLoader } from "../libs/three/examples/jsm/loaders/FBXLoader.js";
+import { FBXLoader } from "../libs/three.js/src/jsm/loaders/FBXLoader.js";
 // import { DDSLoader } from "./libs/three.js/src/jsm/loaders/DDSLoader.js";
 import { TweenLite } from "../libs/gsap/TweenLite.js";
 import Annotations from "./partials/Annotations.js";
 import DomEvents from "./partials/domevents.js";
+
 /**
  * Base
  */
@@ -89,6 +91,21 @@ spotLight.position.set(0, 3, 1);
 scene.add(spotLight);
 scene.add(spotLight.target);
 
+// const rectAreaLight2 = new THREE.RectAreaLight(0x4e00ff, 2, 1, 1);
+// scene.add(rectAreaLight2);
+// rectAreaLight2.position.set(-3, 1, 1.5);
+
+const spotLight2 = new THREE.SpotLight(
+  0x78ff00,
+  0.5,
+  10,
+  Math.PI * 0.1,
+  0.25,
+  1
+);
+spotLight2.position.set(-1, 0, -1);
+scene.add(spotLight2);
+
 gui
   .add(ambientLight, "intensity")
   .max(1)
@@ -131,6 +148,12 @@ gui
   .min(-2)
   .step(0.0001)
   .name("move_spotLight");
+// gui
+//   .add(spotLight2.target.position, "y")
+//   .max(2)
+//   .min(-2)
+//   .step(0.0001)
+//   .name("move_spotLight2");
 
 /**
  * 3d menu
@@ -177,9 +200,15 @@ annotationsGroup.children.forEach((sprite) => {
     if (!toggle && sprite.callback() == 1) {
       toggle = true;
       scene.add(takePicMesh);
+      initWebcamInput();
     } else if (toggle && sprite.callback() == 1) {
-      scene.remove(takePicMesh);
+      // scene.remove(takePicMesh);
       toggle = false;
+      stopWebcamInput();
+    } else if (sprite.callback() == 2) {
+      // scene.remove(takePicMesh);
+      getTexture();
+      scene.add(cardProfile);
     }
     // console.log("true");
   });
@@ -215,6 +244,10 @@ function initWebcamInput() {
     });
   }
 }
+function stopWebcamInput() {
+  video.pause();
+}
+
 /**
  * Objects
  */
@@ -279,20 +312,251 @@ fontLoader.load(
 );
 
 /**
+ * show metaverse card
+ */
+//cardShape
+const cardGeo = new THREE.PlaneBufferGeometry(4, 3);
+const cardButton = new THREE.Mesh(cardGeo, material);
+
+scene.add(cardButton);
+var cardButtonx, cardButtony, cardButtonz;
+cardButton.position.x = 5;
+cardButton.position.z = -2;
+
+//将texture加载到精灵图片
+var cardSpriteTexture;
+function getTexture() {
+  var ran = Math.floor(Math.random() * 3);
+  cardSpriteTexture = new THREE.TextureLoader().load(
+    "../../../pixelArt_Generator-main/myChar/newMergeChar1+1+2+1.png"
+  );
+  return cardSpriteTexture;
+}
+//cardsprite
+const cardProfileGeo = new THREE.PlaneBufferGeometry(1, 1);
+const cardProfilematerial = new THREE.MeshBasicMaterial({
+  map: getTexture(),
+  side: THREE.DoubleSide,
+});
+
+const cardProfile = new THREE.Mesh(cardProfileGeo, cardProfilematerial);
+var cardProfilePos = {
+  positionX: 1,
+  positionY: 0,
+  positionZ: 0,
+};
+cardProfile.position.set(
+  cardProfilePos.positionX,
+  cardProfilePos.positionY,
+  cardProfilePos.positionZ
+);
+
+gui.add(cardProfilePos, "positionX", -5, 5);
+gui.add(cardProfilePos, "positionY", -5, 5);
+gui.add(cardProfilePos, "positionZ", -5, 5);
+
+/**
  * 模型
  */
-// const url = "../models/swordCard.fbx";
-// const fbxloader = new THREE.FBXLoader();
-// fbxloader.load(url, function (loadedModel) {
-//   const textureLoader = new THREE.TextureLoader();
-//   //  const textureUrl = "../model/fbx/beats耳机/textures/beats_red.png";
-//   //  const textureNormal = textureLoader.load(textureUrl);
-//   mesh = loadedModel.children[0].clone();
-//   //  mesh.material.map = textureNormal;
-//   //  mesh.material.shininess = 15;
-//   //  console.log(loadedModel.children[0]);
-//   scene.add(mesh);
-// });
+//卡片1
+const manager = new THREE.LoadingManager(loadModel); //加载进度和出错情况
+manager.onProgress = function (item, loaded, total) {
+  console.log(item, loaded, total);
+};
+loadFBX(manager);
+function loadFBX(manager) {
+  var loader = new FBXLoader(manager).load(
+    "./models/card1.fbx",
+    function (fbx) {
+      objectFBX = fbx;
+    },
+    onProgress,
+    onError
+  );
+}
+
+var objectFBX;
+function loadModel() {
+  objectFBX.position.set(-5, 1.1, -5);
+  objectFBX.scale.set(0.01, 0.01, 0.01);
+  scene.add(objectFBX);
+
+  scene.add(spotLight2.target);
+  spotLight2.lookAt(objectFBX);
+
+  var objectFBXPos = {
+    positionX: -5,
+    positionY: 1.1,
+    positionZ: -5,
+  };
+  objectFBX.position.set(
+    objectFBXPos.positionX,
+    objectFBXPos.positionY,
+    objectFBXPos.positionZ
+  );
+
+  gui.add(objectFBXPos, "positionX", -5, 5);
+  gui.add(objectFBXPos, "positionY", -5, 5);
+  gui.add(objectFBXPos, "positionZ", -5, 5);
+
+  // videoTexture.needsUpdate = true;
+  const clock = new THREE.Clock();
+  var pos = 0;
+  const tick = () => {
+    const elapsedTime = clock.getElapsedTime();
+
+    // Update objects
+    pos += 0.005;
+    objectFBX.rotation.y = Math.abs(Math.sin(pos) * -1);
+    objectFBX.position.set(
+      objectFBXPos.positionX,
+      objectFBXPos.positionY,
+      objectFBXPos.positionZ
+    );
+
+    // Render
+    renderer.render(scene, camera);
+
+    // Call tick again on the next frame
+    window.requestAnimationFrame(tick);
+  };
+
+  tick();
+}
+
+//卡片2
+const manager2 = new THREE.LoadingManager(loadModel2); //加载进度和出错情况
+manager2.onProgress = function (item, loaded, total) {
+  console.log(item, loaded, total);
+};
+loadFBX2(manager2);
+function loadFBX2(manager2) {
+  var loader = new FBXLoader(manager2).load(
+    "./models/card2.fbx",
+    function (fbx2) {
+      objectFBX2 = fbx2;
+    },
+    onProgress,
+    onError
+  );
+}
+var objectFBX2;
+function loadModel2() {
+  objectFBX2.position.set(-2.1, 1.1, -5);
+  objectFBX2.scale.set(0.01, 0.01, 0.01);
+  scene.add(objectFBX2);
+
+  var objectFBXPos2 = {
+    positionX: -2.1,
+    positionY: 1.1,
+    positionZ: -5,
+  };
+  objectFBX2.position.set(
+    objectFBXPos2.positionX,
+    objectFBXPos2.positionY,
+    objectFBXPos2.positionZ
+  );
+
+  gui.add(objectFBXPos2, "positionX", -5, 5);
+  gui.add(objectFBXPos2, "positionY", -5, 5);
+  gui.add(objectFBXPos2, "positionZ", -5, 5);
+
+  // videoTexture.needsUpdate = true;
+  const clock = new THREE.Clock();
+  var pos2 = 0;
+  const tick = () => {
+    const elapsedTime = clock.getElapsedTime();
+
+    // Update objects
+    pos2 += 0.005;
+    objectFBX2.rotation.y = Math.abs(Math.sin(pos2) * -1);
+    objectFBX2.position.set(
+      objectFBXPos2.positionX,
+      objectFBXPos2.positionY,
+      objectFBXPos2.positionZ
+    );
+
+    // Render
+    renderer.render(scene, camera);
+
+    // Call tick again on the next frame
+    window.requestAnimationFrame(tick);
+  };
+
+  tick();
+}
+
+//卡片3
+const manager3 = new THREE.LoadingManager(loadModel3); //加载进度和出错情况
+manager3.onProgress = function (item, loaded, total) {
+  console.log(item, loaded, total);
+};
+loadFBX3(manager3);
+function loadFBX3(manager3) {
+  var loader = new FBXLoader(manager3).load(
+    "./models/card3.fbx",
+    function (fbx3) {
+      objectFBX3 = fbx3;
+    },
+    onProgress,
+    onError
+  );
+}
+var objectFBX3;
+function loadModel3() {
+  objectFBX3.position.set(0.7, 1.1, -5);
+  objectFBX3.scale.set(0.01, 0.01, 0.01);
+  scene.add(objectFBX3);
+
+  var objectFBXPos3 = {
+    positionX: 0.7,
+    positionY: 1.1,
+    positionZ: -5,
+  };
+  objectFBX3.position.set(
+    objectFBXPos3.positionX,
+    objectFBXPos3.positionY,
+    objectFBXPos3.positionZ
+  );
+
+  gui.add(objectFBXPos3, "positionX", -5, 5);
+  gui.add(objectFBXPos3, "positionY", -5, 5);
+  gui.add(objectFBXPos3, "positionZ", -5, 5);
+
+  // videoTexture.needsUpdate = true;
+  const clock = new THREE.Clock();
+  var pos3 = 0;
+  const tick = () => {
+    const elapsedTime = clock.getElapsedTime();
+
+    // Update objects
+    pos3 += 0.005;
+    objectFBX3.rotation.y = Math.abs(Math.sin(pos3) * -1);
+    objectFBX3.position.set(
+      objectFBXPos3.positionX,
+      objectFBXPos3.positionY,
+      objectFBXPos3.positionZ
+    );
+
+    // Render
+    renderer.render(scene, camera);
+
+    // Call tick again on the next frame
+    window.requestAnimationFrame(tick);
+  };
+
+  tick();
+}
+//加载进度
+function onProgress(xhr) {
+  if (xhr.lengthComputable) {
+    const percentComplete = (xhr.loaded / xhr.total) * 100;
+    console.log("model" + Math.round(percentComplete, 2) + "% downloaded");
+  }
+}
+
+function onError() {}
+
 window.addEventListener("resize", () => {
   // Update sizes
   sizes.width = window.innerWidth;
@@ -330,6 +594,12 @@ const tick = () => {
   sphere.rotation.x = 0.15 * elapsedTime;
   cube.rotation.x = 0.15 * elapsedTime;
   torus.rotation.x = 0.15 * elapsedTime;
+
+  cardProfile.position.set(
+    cardProfilePos.positionX,
+    cardProfilePos.positionY,
+    cardProfilePos.positionZ
+  );
 
   //update canvas
   // var canvas_context = canvas.getContext("2d");
