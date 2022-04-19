@@ -12,7 +12,11 @@ import { FBXLoader } from "../libs/three.js/src/jsm/loaders/FBXLoader.js";
 import { TweenLite } from "../libs/gsap/TweenLite.js";
 import Annotations from "./partials/Annotations.js";
 import DomEvents from "./partials/domevents.js";
+// import SceneHinge from "./SceneHinge.js";
 
+import MenuHinge from "./MenuHinge.js";
+import * as CANNON from "../node_modules/cannon-es/dist/cannon-es.js";
+import CannonDebugRenderer from "./utils/CannonDebugRenderer.js";
 /**
  * Base
  */
@@ -36,7 +40,6 @@ const sizes = {
 /**
  * Camera
  */
-// Base camera
 const camera = new THREE.PerspectiveCamera(
   75,
   sizes.width / sizes.height,
@@ -69,10 +72,16 @@ const hemisphereLight = new THREE.HemisphereLight(0xff0000, 0x0000ff, 0.5);
 scene.add(hemisphereLight);
 
 const pointLight = new THREE.PointLight(0xff9000, 0.5, 4);
-pointLight.position.x = 1;
-pointLight.position.y = -0.5;
-pointLight.position.z = 1;
+pointLight.position.x = 3;
+pointLight.position.y = 2;
+pointLight.position.z = -0.5;
 scene.add(pointLight);
+
+const pointLight2 = new THREE.PointLight(0xff9000, 0.5, 4);
+pointLight2.position.x = 3;
+pointLight2.position.y = 1;
+pointLight2.position.z = 2;
+scene.add(pointLight2);
 
 const rectAreaLight = new THREE.RectAreaLight(0x4e00ff, 2, 1, 1);
 scene.add(rectAreaLight);
@@ -158,6 +167,12 @@ gui
 /**
  * 3d menu
  */
+var $stage = document.getElementById("puidu-webgl-output");
+var world = new CANNON.World();
+world.gravity.set(0, -10, 0);
+var menu = new MenuHinge(scene, world, camera);
+
+// const aspect = window.innerWidth / window.innerHeight;
 
 /**
  *Annotations
@@ -290,10 +305,10 @@ scene.add(sphere, cube, torus, plane);
 var gFont;
 const fontLoader = new FontLoader();
 fontLoader.load(
-  "./libs/three.js/src/fonts/helvetiker_bold.typeface.json",
+  "./libs/three.js/src/fonts/TsangerYuYangT_W02_Regular.json",
   function (font) {
     gFont = font;
-    const textGeometery = new TextGeometry("NFT ID Card", {
+    const textGeometery = new TextGeometry("元宇宙通行证", {
       font: font,
       size: 0.5,
       height: 0.2,
@@ -318,7 +333,7 @@ fontLoader.load(
 const cardGeo = new THREE.PlaneBufferGeometry(4, 3);
 const cardButton = new THREE.Mesh(cardGeo, material);
 
-scene.add(cardButton);
+// scene.add(cardButton);
 var cardButtonx, cardButtony, cardButtonz;
 cardButton.position.x = 5;
 cardButton.position.z = -2;
@@ -547,6 +562,68 @@ function loadModel3() {
 
   tick();
 }
+
+//卡片4
+const manager4 = new THREE.LoadingManager(loadModel4); //加载进度和出错情况
+manager4.onProgress = function (item, loaded, total) {
+  console.log(item, loaded, total);
+};
+loadFBX4(manager4);
+function loadFBX4(manager4) {
+  var loader = new FBXLoader(manager4).load(
+    "./models/card4.fbx",
+    function (fbx4) {
+      objectFBX4 = fbx4;
+    },
+    onProgress,
+    onError
+  );
+}
+var objectFBX4;
+function loadModel4() {
+  objectFBX4.position.set(3.6, 1.1, -5);
+  objectFBX4.scale.set(0.01, 0.01, 0.01);
+  scene.add(objectFBX4);
+
+  var objectFBXPos4 = {
+    positionX: 3.6,
+    positionY: 1.1,
+    positionZ: -5,
+  };
+  objectFBX4.position.set(
+    objectFBXPos4.positionX,
+    objectFBXPos4.positionY,
+    objectFBXPos4.positionZ
+  );
+
+  gui.add(objectFBXPos4, "positionX", -5, 5);
+  gui.add(objectFBXPos4, "positionY", -5, 5);
+  gui.add(objectFBXPos4, "positionZ", -5, 5);
+
+  // videoTexture.needsUpdate = true;
+  const clock = new THREE.Clock();
+  var pos4 = 0;
+  const tick = () => {
+    const elapsedTime = clock.getElapsedTime();
+
+    // Update objects
+    pos4 += 0.005;
+    objectFBX4.rotation.y = Math.abs(Math.sin(pos4) * -1);
+    objectFBX4.position.set(
+      objectFBXPos4.positionX,
+      objectFBXPos4.positionY,
+      objectFBXPos4.positionZ
+    );
+
+    // Render
+    renderer.render(scene, camera);
+
+    // Call tick again on the next frame
+    window.requestAnimationFrame(tick);
+  };
+
+  tick();
+}
 //加载进度
 function onProgress(xhr) {
   if (xhr.lengthComputable) {
@@ -608,6 +685,9 @@ const tick = () => {
   // Update controls
   controls.update();
 
+  menu.update();
+
+  world.step(1 / 60);
   // Render
   renderer.render(scene, camera);
 
