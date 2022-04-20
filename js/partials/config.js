@@ -20,19 +20,19 @@ export const annotationStyle3D = {
 export const annotations = [
   {
     number: 1,
-    position: new THREE.Vector3(-3, 3, -3),
+    position: new THREE.Vector3(-2.1, 0, -2.6),
     link: "",
   },
 
   {
     number: 2,
-    position: new THREE.Vector3(0, 4, -3),
+    position: new THREE.Vector3(0, 0, -2.6),
     link: "",
   },
 
   {
     number: 3,
-    position: new THREE.Vector3(3, 3, -3),
+    position: new THREE.Vector3(2.1, 0, -2.6),
     link: "",
   },
 ];

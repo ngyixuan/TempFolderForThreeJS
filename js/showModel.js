@@ -83,6 +83,12 @@ pointLight2.position.y = 1;
 pointLight2.position.z = 2;
 scene.add(pointLight2);
 
+const pointLight3 = new THREE.PointLight(0xff9000, 0.5, 4);
+pointLight3.position.x = -3;
+pointLight3.position.y = 1;
+pointLight3.position.z = 2;
+scene.add(pointLight3);
+
 const rectAreaLight = new THREE.RectAreaLight(0x4e00ff, 2, 1, 1);
 scene.add(rectAreaLight);
 rectAreaLight.position.set(-1.5, 0, 1.5);
@@ -188,7 +194,6 @@ const canvasContainer = document.getElementById("puidu-webgl-output");
 annotations.createTHREEAnnotations(annotationsGroup);
 scene.add(annotationsGroup);
 annotationsGroup.children.forEach((sprite) => {
-  let toggle = false;
   let initialScale = sprite.scale.x;
   domEvents.addEventListener(sprite, "mouseover", function (event) {
     event.stopPropagation();
@@ -206,24 +211,21 @@ annotationsGroup.children.forEach((sprite) => {
     hovering--;
     sprite.scale.x = sprite.scale.y = sprite.scale.z = initialScale;
   });
+
   domEvents.addEventListener(sprite, "click", function (e) {
     console.log(e);
     sprite.callback();
     console.log(sprite.callback());
     // console.log(annotation.number);
 
-    if (!toggle && sprite.callback() == 1) {
-      toggle = true;
+    if (sprite.callback() == 1) {
       scene.add(takePicMesh);
       initWebcamInput();
-    } else if (toggle && sprite.callback() == 1) {
-      // scene.remove(takePicMesh);
-      toggle = false;
-      stopWebcamInput();
     } else if (sprite.callback() == 2) {
-      // scene.remove(takePicMesh);
-      getTexture();
-      scene.add(cardProfile);
+      stopWebcamInput();
+    } else if (sprite.callback() == 3) {
+      scene.remove(takePicMesh);
+      getPixelGenerator();
     }
     // console.log("true");
   });
@@ -236,19 +238,28 @@ takePicPlanetexture.minFilter = THREE.LinearFilter;
 takePicPlanetexture.magFilter = THREE.LinearFilter;
 takePicPlanetexture.format = THREE.RGBFormat;
 
-const takePicPlaneGeo = new THREE.PlaneBufferGeometry(4, 3);
+const takePicPlaneGeo = new THREE.PlaneBufferGeometry(2, 2.3);
 const takePicPlanematerial = new THREE.MeshBasicMaterial({
   map: takePicPlanetexture,
   // side: THREE.DoubleSide,
 });
 
 const takePicMesh = new THREE.Mesh(takePicPlaneGeo, takePicPlanematerial);
-takePicMesh.position.x = -6;
-takePicMesh.rotation.x = 0.5;
-takePicMesh.rotation.y = 0.7;
-takePicMesh.rotation.z = -0.3;
-takePicMesh.position.y = 1;
-takePicMesh.position.z = -2;
+
+var takePicMeshPos = {
+  takePicMeshPositionX: 0,
+  takePicMeshPositionY: 1.4,
+  takePicMeshPositionZ: -4.4,
+};
+takePicMesh.position.set(
+  takePicMeshPos.takePicMeshPositionX,
+  takePicMeshPos.takePicMeshPositionY,
+  takePicMeshPos.takePicMeshPositionZ
+);
+
+gui.add(takePicMeshPos, "takePicMeshPositionX", -5, 5);
+gui.add(takePicMeshPos, "takePicMeshPositionY", -5, 5);
+gui.add(takePicMeshPos, "takePicMeshPositionZ", -5, 5);
 
 initWebcamInput();
 function initWebcamInput() {
@@ -327,16 +338,8 @@ fontLoader.load(
 );
 
 /**
- * show metaverse card
+ * show metaverse card pixel
  */
-//cardShape
-const cardGeo = new THREE.PlaneBufferGeometry(4, 3);
-const cardButton = new THREE.Mesh(cardGeo, material);
-
-// scene.add(cardButton);
-var cardButtonx, cardButtony, cardButtonz;
-cardButton.position.x = 5;
-cardButton.position.z = -2;
 
 //将texture加载到精灵图片
 var cardSpriteTexture;
@@ -348,7 +351,7 @@ function getTexture() {
   return cardSpriteTexture;
 }
 //cardsprite
-const cardProfileGeo = new THREE.PlaneBufferGeometry(1, 1);
+const cardProfileGeo = new THREE.PlaneBufferGeometry(1.9, 2.3);
 const cardProfilematerial = new THREE.MeshBasicMaterial({
   map: getTexture(),
   side: THREE.DoubleSide,
@@ -356,19 +359,22 @@ const cardProfilematerial = new THREE.MeshBasicMaterial({
 
 const cardProfile = new THREE.Mesh(cardProfileGeo, cardProfilematerial);
 var cardProfilePos = {
-  positionX: 1,
-  positionY: 0,
-  positionZ: 0,
+  cardProfilePosX: 0,
+  cardProfilePosY: 1.4,
+  cardProfilePosZ: -4.4,
 };
 cardProfile.position.set(
-  cardProfilePos.positionX,
-  cardProfilePos.positionY,
-  cardProfilePos.positionZ
+  cardProfilePos.cardProfilePosX,
+  cardProfilePos.cardProfilePosY,
+  cardProfilePos.cardProfilePosZ
 );
 
-gui.add(cardProfilePos, "positionX", -5, 5);
-gui.add(cardProfilePos, "positionY", -5, 5);
-gui.add(cardProfilePos, "positionZ", -5, 5);
+gui.add(cardProfilePos, "cardProfilePosX", -5, 5);
+gui.add(cardProfilePos, "cardProfilePosY", -5, 5);
+gui.add(cardProfilePos, "cardProfilePosZ", -5, 5);
+function getPixelGenerator() {
+  scene.add(cardProfile);
+}
 
 /**
  * 模型
@@ -392,7 +398,8 @@ function loadFBX(manager) {
 
 var objectFBX;
 function loadModel() {
-  objectFBX.position.set(-5, 1.1, -5);
+  objectFBX.position.set(-3.9, 1.1, -5);
+
   objectFBX.scale.set(0.01, 0.01, 0.01);
   scene.add(objectFBX);
 
@@ -400,7 +407,7 @@ function loadModel() {
   spotLight2.lookAt(objectFBX);
 
   var objectFBXPos = {
-    positionX: -5,
+    positionX: -3.9,
     positionY: 1.1,
     positionZ: -5,
   };
@@ -422,7 +429,7 @@ function loadModel() {
 
     // Update objects
     pos += 0.005;
-    objectFBX.rotation.y = Math.abs(Math.sin(pos) * -1);
+    objectFBX.rotation.y = 25 + Math.abs(Math.sin(pos) * -1);
     objectFBX.position.set(
       objectFBXPos.positionX,
       objectFBXPos.positionY,
@@ -457,14 +464,14 @@ function loadFBX2(manager2) {
 }
 var objectFBX2;
 function loadModel2() {
-  objectFBX2.position.set(-2.1, 1.1, -5);
+  objectFBX2.position.set(-5, 1.1, -2.2);
   objectFBX2.scale.set(0.01, 0.01, 0.01);
   scene.add(objectFBX2);
 
   var objectFBXPos2 = {
-    positionX: -2.1,
+    positionX: -5,
     positionY: 1.1,
-    positionZ: -5,
+    positionZ: -2.2,
   };
   objectFBX2.position.set(
     objectFBXPos2.positionX,
@@ -519,14 +526,14 @@ function loadFBX3(manager3) {
 }
 var objectFBX3;
 function loadModel3() {
-  objectFBX3.position.set(0.7, 1.1, -5);
+  objectFBX3.position.set(5, 1.1, -2.2);
   objectFBX3.scale.set(0.01, 0.01, 0.01);
   scene.add(objectFBX3);
 
   var objectFBXPos3 = {
-    positionX: 0.7,
+    positionX: 5,
     positionY: 1.1,
-    positionZ: -5,
+    positionZ: -2.2,
   };
   objectFBX3.position.set(
     objectFBXPos3.positionX,
@@ -545,8 +552,8 @@ function loadModel3() {
     const elapsedTime = clock.getElapsedTime();
 
     // Update objects
-    pos3 += 0.005;
-    objectFBX3.rotation.y = Math.abs(Math.sin(pos3) * -1);
+    pos3 += 0.004;
+    objectFBX3.rotation.y = Math.abs(Math.cos(pos3) * -1) - 26.1;
     objectFBX3.position.set(
       objectFBXPos3.positionX,
       objectFBXPos3.positionY,
@@ -581,7 +588,7 @@ function loadFBX4(manager4) {
 }
 var objectFBX4;
 function loadModel4() {
-  objectFBX4.position.set(3.6, 1.1, -5);
+  objectFBX4.position.set(5, 1.1, -2.5);
   objectFBX4.scale.set(0.01, 0.01, 0.01);
   scene.add(objectFBX4);
 
@@ -607,8 +614,8 @@ function loadModel4() {
     const elapsedTime = clock.getElapsedTime();
 
     // Update objects
-    pos4 += 0.005;
-    objectFBX4.rotation.y = Math.abs(Math.sin(pos4) * -1);
+    pos4 += 0.004;
+    objectFBX4.rotation.y = Math.abs(Math.cos(pos4) * -1) - 26.1;
     objectFBX4.position.set(
       objectFBXPos4.positionX,
       objectFBXPos4.positionY,
@@ -624,6 +631,60 @@ function loadModel4() {
 
   tick();
 }
+
+//卡片5
+const manager5 = new THREE.LoadingManager(loadModel5); //加载进度和出错情况
+manager5.onProgress = function (item, loaded, total) {
+  console.log(item, loaded, total);
+};
+loadFBX5(manager5);
+function loadFBX5(manager5) {
+  var loader = new FBXLoader(manager5).load(
+    "./models/card5.fbx",
+    function (fbx5) {
+      objectFBX5 = fbx5;
+    },
+    onProgress,
+    onError
+  );
+}
+var objectFBX5;
+function loadModel5() {
+  objectFBX5.position.set(0, 1.1, -5);
+  objectFBX5.scale.set(0.01, 0.01, 0.01);
+  scene.add(objectFBX5);
+
+  var objectFBXPos5 = {
+    positionX: 0,
+    positionY: 1.1,
+    positionZ: -5,
+  };
+  objectFBX5.position.set(
+    objectFBXPos5.positionX,
+    objectFBXPos5.positionY,
+    objectFBXPos5.positionZ
+  );
+
+  gui.add(objectFBXPos5, "positionX", -5, 5);
+  gui.add(objectFBXPos5, "positionY", -5, 5);
+  gui.add(objectFBXPos5, "positionZ", -5, 5);
+
+  const tick = () => {
+    objectFBX5.position.set(
+      objectFBXPos5.positionX,
+      objectFBXPos5.positionY,
+      objectFBXPos5.positionZ
+    );
+
+    // Render
+    renderer.render(scene, camera);
+
+    // Call tick again on the next frame
+    window.requestAnimationFrame(tick);
+  };
+  tick();
+}
+
 //加载进度
 function onProgress(xhr) {
   if (xhr.lengthComputable) {
@@ -672,15 +733,17 @@ const tick = () => {
   cube.rotation.x = 0.15 * elapsedTime;
   torus.rotation.x = 0.15 * elapsedTime;
 
-  cardProfile.position.set(
-    cardProfilePos.positionX,
-    cardProfilePos.positionY,
-    cardProfilePos.positionZ
+  takePicMesh.position.set(
+    takePicMeshPos.takePicMeshPositionX,
+    takePicMeshPos.takePicMeshPositionY,
+    takePicMeshPos.takePicMeshPositionZ
   );
 
-  //update canvas
-  // var canvas_context = canvas.getContext("2d");
-  // canvas_context.drawImage(video, 0, 0, 320, 240);
+  cardProfile.position.set(
+    cardProfilePos.cardProfilePosX,
+    cardProfilePos.cardProfilePosY,
+    cardProfilePos.cardProfilePosZ
+  );
 
   // Update controls
   controls.update();

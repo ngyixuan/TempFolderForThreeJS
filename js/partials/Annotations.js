@@ -14,79 +14,19 @@ export default class Annotations {
     this.canvasContainer = document.getElementById("main");
   }
 
-  // makeTextSprite() {
-  //   var gFont, sprite;
-  //   var fontLoader = new FontLoader();
-  //   var material = new THREE.MeshStandardMaterial();
-  //   fontLoader.load(
-  //     "../../libs/three.js/src/fonts/helvetiker_bold.typeface.json",
-  //     function (font) {
-  //       gFont = font;
-  //       const textGeometery = new TextGeometry("Take Picture", {
-  //         font: font,
-  //         size: 0.5,
-  //         height: 0.2,
-  //         curveSegments: 12,
-  //         bevelEnabled: true,
-  //         bevelThickness: 0.03,
-  //         bevelSize: 0.02,
-  //         bevelOffset: 0,
-  //         bevelSegments: 5,
-  //       });
-
-  //       sprite = new THREE.Mesh(textGeometery, material);
-  //     }
-  //   );
-  // }
-
   createTHREEAnnotations(scene) {
     annotations.forEach((annotation) => {
-      let material = new THREE.MeshStandardMaterial();
+      let material = new THREE.MeshStandardMaterial({
+        color: 0xff9292,
+      });
       material.roughness = 0.4;
 
       const sprite = new THREE.Mesh(
-        new THREE.SphereBufferGeometry(0.5, 32, 32),
+        new THREE.BoxBufferGeometry(0.5, 0.1, 0.8),
         material
       );
 
       scene.add(sprite);
-
-      // var material = new THREE.MeshStandardMaterial();
-      // material.roughness = 0.4;
-
-      // var gFont, sprite;
-      // const fontLoader = new FontLoader();
-      // fontLoader.load(
-      //   "./libs/three.js/src/fonts/helvetiker_bold.typeface.json",
-      //   function (font) {
-      //     gFont = font;
-      //     const textGeometery = new TextGeometry("NFT ID Card", {
-      //       font: font,
-      //       size: 0.5,
-      //       height: 0.2,
-      //       curveSegments: 12,
-      //       bevelEnabled: true,
-      //       bevelThickness: 0.03,
-      //       bevelSize: 0.02,
-      //       bevelOffset: 0,
-      //       bevelSegments: 5,
-      //     });
-      //     textGeometery.center();
-      //     sprite = new THREE.Mesh(textGeometery, material);
-      //     // sprite.position.y = 1;
-      //     // sprite.position.set(
-      //     //   annotation.position.x,
-      //     //   annotation.position.y,
-      //     //   annotation.position.z
-      //     // );
-
-      //     // sprite.callback = () => {
-      //     //   annotationCallback(annotation.number, annotation.link);
-      //     //   return annotation.number;
-      //     // };
-      //     scene.add(sprite);
-      //   }
-      // );
 
       sprite.position.set(
         annotation.position.x,
