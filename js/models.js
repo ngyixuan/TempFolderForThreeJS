@@ -131,7 +131,7 @@ engine.start();
 //延时加载
 setTimeout(() => {
   //文字
-  const animatedtext3d = new AnimatedText3D("Boreal Sky", {
+  const animatedtext3d = new AnimatedText3D("元宇宙通行证贩卖机", {
     //Boreal Sky
     color: "#FFFFFF",
     size: app.isMobile ? 0.08 : 0.1,

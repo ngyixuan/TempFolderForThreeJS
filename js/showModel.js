@@ -83,11 +83,35 @@ pointLight2.position.y = 1;
 pointLight2.position.z = 2;
 scene.add(pointLight2);
 
-const pointLight3 = new THREE.PointLight(0xff9000, 0.5, 4);
-pointLight3.position.x = -3;
-pointLight3.position.y = 1;
-pointLight3.position.z = 2;
-scene.add(pointLight3);
+const spotLight1 = new THREE.SpotLight(
+  0x78ff00,
+  0.5,
+  10,
+  Math.PI * 0.5,
+  0.25,
+  1
+);
+spotLight1.position.x = -3;
+spotLight1.position.y = 1.1;
+spotLight1.position.z = -4.5;
+// rectAreaLight1.lookAt(new THREE.Vector3());
+scene.add(spotLight1);
+
+const spotLight3 = new THREE.SpotLight(
+  0x78ff00,
+  0.5,
+  10,
+  Math.PI * 0.5,
+  0.25,
+  1
+);
+
+spotLight3.position.x = 3;
+spotLight3.position.y = 1.1;
+spotLight3.position.z = -4.5;
+// rectAreaLight1.lookAt(new THREE.Vector3());
+scene.add(spotLight3);
+// scene.add(rectAreaLight1);
 
 const rectAreaLight = new THREE.RectAreaLight(0x4e00ff, 2, 1, 1);
 scene.add(rectAreaLight);
@@ -219,8 +243,10 @@ annotationsGroup.children.forEach((sprite) => {
     // console.log(annotation.number);
 
     if (sprite.callback() == 1) {
-      scene.add(takePicMesh);
-      initWebcamInput();
+      scene.remove(cardProfile);
+      getpayQRCode();
+      // scene.add(takePicMesh);
+      // initWebcamInput();
     } else if (sprite.callback() == 2) {
       stopWebcamInput();
     } else if (sprite.callback() == 3) {
@@ -344,36 +370,86 @@ fontLoader.load(
 //将texture加载到精灵图片
 var cardSpriteTexture;
 function getTexture() {
-  var ran = Math.floor(Math.random() * 3);
+  var ran1 = Math.floor(Math.random() * 3 + 1);
+  var ran2 = Math.floor(Math.random() * 3 + 1);
+  var ran3 = Math.floor(Math.random() * 3 + 1);
+  var ran4 = Math.floor(Math.random() * 2 + 1);
+  // var url =  "../../../pixelArt_Generator-main/myChar/newMergeChar" +
+  // ran1 +
+  // ran2 +
+  // ran3 +
+  // ran4 +
+  // ".png"
+  console.log(Math.floor(Math.random() * 3));
   cardSpriteTexture = new THREE.TextureLoader().load(
-    "../../../pixelArt_Generator-main/myChar/newMergeChar1+1+2+1.png"
+    "../../../pixelArt_Generator-main/myChar/newMergeChar" +
+      ran1 +
+      "+" +
+      ran2 +
+      "+" +
+      ran3 +
+      "+" +
+      ran4 +
+      ".png"
   );
+  console.log(cardSpriteTexture);
   return cardSpriteTexture;
 }
-//cardsprite
-const cardProfileGeo = new THREE.PlaneBufferGeometry(1.9, 2.3);
-const cardProfilematerial = new THREE.MeshBasicMaterial({
-  map: getTexture(),
-  side: THREE.DoubleSide,
-});
-
-const cardProfile = new THREE.Mesh(cardProfileGeo, cardProfilematerial);
-var cardProfilePos = {
-  cardProfilePosX: 0,
-  cardProfilePosY: 1.4,
-  cardProfilePosZ: -4.4,
-};
-cardProfile.position.set(
-  cardProfilePos.cardProfilePosX,
-  cardProfilePos.cardProfilePosY,
-  cardProfilePos.cardProfilePosZ
-);
-
-gui.add(cardProfilePos, "cardProfilePosX", -5, 5);
-gui.add(cardProfilePos, "cardProfilePosY", -5, 5);
-gui.add(cardProfilePos, "cardProfilePosZ", -5, 5);
+var cardProfile;
 function getPixelGenerator() {
+  //cardsprite
+  const cardProfileGeo = new THREE.PlaneBufferGeometry(1.9, 2.3);
+  const cardProfilematerial = new THREE.MeshBasicMaterial({
+    map: getTexture(),
+    side: THREE.DoubleSide,
+  });
+
+  cardProfile = new THREE.Mesh(cardProfileGeo, cardProfilematerial);
+  var cardProfilePos = {
+    cardProfilePosX: 0,
+    cardProfilePosY: 1.4,
+    cardProfilePosZ: -4.4,
+  };
+  cardProfile.position.set(
+    cardProfilePos.cardProfilePosX,
+    cardProfilePos.cardProfilePosY,
+    cardProfilePos.cardProfilePosZ
+  );
+
+  gui.add(cardProfilePos, "cardProfilePosX", -5, 5);
+  gui.add(cardProfilePos, "cardProfilePosY", -5, 5);
+  gui.add(cardProfilePos, "cardProfilePosZ", -5, 5);
   scene.add(cardProfile);
+}
+
+/**
+ * 扫码付款
+ */
+var payQRCode;
+function getpayQRCode() {
+  //cardsprite
+  const payQRGeo = new THREE.PlaneBufferGeometry(1.9, 2.3);
+  const payQRmaterial = new THREE.MeshBasicMaterial({
+    map: new THREE.TextureLoader().load("./models/pay.png"),
+    side: THREE.DoubleSide,
+  });
+
+  payQRCode = new THREE.Mesh(payQRGeo, payQRmaterial);
+  var payQRCodePos = {
+    payQRPosX: 0,
+    payQRPosY: 1.4,
+    payQRPosZ: -4.4,
+  };
+  payQRCode.position.set(
+    payQRCodePos.payQRPosX,
+    payQRCodePos.payQRPosY,
+    payQRCodePos.payQRPosZ
+  );
+
+  gui.add(payQRCodePos, "payQRPosX", -5, 5);
+  gui.add(payQRCodePos, "payQRPosY", -5, 5);
+  gui.add(payQRCodePos, "payQRPosZ", -5, 5);
+  scene.add(payQRCode);
 }
 
 /**
@@ -739,11 +815,11 @@ const tick = () => {
     takePicMeshPos.takePicMeshPositionZ
   );
 
-  cardProfile.position.set(
-    cardProfilePos.cardProfilePosX,
-    cardProfilePos.cardProfilePosY,
-    cardProfilePos.cardProfilePosZ
-  );
+  // cardProfile.position.set(
+  //   cardProfilePos.cardProfilePosX,
+  //   cardProfilePos.cardProfilePosY,
+  //   cardProfilePos.cardProfilePosZ
+  // );
 
   // Update controls
   controls.update();

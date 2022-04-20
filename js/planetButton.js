@@ -5,16 +5,15 @@ class Experience {
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2(0, 0);
     this._pos = {
-      x: 0
+      x: 0,
     };
-
 
     this.camera = new THREE.PerspectiveCamera(70, width / height, 1, 3000);
     this.camera.position.z = 200;
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
-      alpha: true
+      alpha: true,
     });
 
     this.renderer.setSize(width, height);
@@ -49,21 +48,20 @@ class Experience {
   }
 
   _addMeshes() {
-    var _prefix = 'img';
+    var _prefix = "img";
     var urls = [
       _prefix + "nx.jpg",
       _prefix + "ny.jpg",
       _prefix + "nz.jpg",
       _prefix + "px.jpg",
       _prefix + "py.jpg",
-      _prefix + "pz.jpg"
+      _prefix + "pz.jpg",
     ];
-
 
     // var cubemap = THREE.ImageUtils.loadTextureCube(urls);
     // cubemap.format = THREE.RGBFormat;
 
-    var geometry = new THREE.SphereGeometry(24, 32, 32);
+    var geometry = new THREE.SphereGeometry(24, 50, 32);
     var material = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
       roughness: 0.3,
@@ -100,170 +98,192 @@ class Experience {
 
   animateIn() {
     TweenMax.to(this._torus.material, 0.6, {
-      opacity: 1
+      opacity: 1,
     });
 
     TweenMax.fromTo(
       this._torus.scale,
-      0.6, {
+      0.6,
+      {
         x: 0.8,
         y: 0.8,
-        z: 0.8
-      }, {
+        z: 0.8,
+      },
+      {
         x: 1.35,
         y: 1.35,
-        z: 1.35
-      });
+        z: 1.35,
+      }
+    );
 
     TweenMax.fromTo(
       this._torus.position,
-      0.6, {
+      0.6,
+      {
         x: 10,
-        y: 20
-      }, {
+        y: 20,
+      },
+      {
         x: 30,
-        y: 40
-      });
-
+        y: 40,
+      }
+    );
 
     TweenMax.fromTo(
       this._torus.rotation,
-      0.6, {
+      0.6,
+      {
         x: 2.0,
-        y: -0.3
-      }, {
+        y: -0.3,
+      },
+      {
         x: 2.3,
-        y: 0.3
-      });
-
+        y: 0.3,
+      }
+    );
 
     TweenMax.fromTo(
       this._sphere.scale,
-      0.6, {
+      0.6,
+      {
         x: 0.8,
         y: 0.8,
-        z: 0.8
-      }, {
+        z: 0.8,
+      },
+      {
         x: 1.15,
         y: 1.15,
-        z: 1.15
-      });
+        z: 1.15,
+      }
+    );
 
     TweenMax.fromTo(
       this._sphere.position,
-      0.6, {
+      0.6,
+      {
         x: -10,
-        y: -10
-      }, {
+        y: -10,
+      },
+      {
         x: -30,
-        y: -40
-      });
-
+        y: -40,
+      }
+    );
 
     TweenMax.fromTo(
       this._cone.scale,
-      0.6, {
+      0.6,
+      {
         x: 0.8,
         y: 0.8,
-        z: 0.8
-      }, {
+        z: 0.8,
+      },
+      {
         x: 1.35,
         y: 1.35,
-        z: 1.35
-      });
+        z: 1.35,
+      }
+    );
 
     TweenMax.fromTo(
       this._cone.position,
-      0.6, {
+      0.6,
+      {
         x: -30,
         y: 2,
-        z: 3
-      }, {
+        z: 3,
+      },
+      {
         x: -70,
         y: 12,
-        z: 3
-      });
-
+        z: 3,
+      }
+    );
 
     TweenMax.fromTo(
       this._cone.rotation,
-      0.6, {
+      0.6,
+      {
         x: -0.2,
-        z: 0.0
-      }, {
+        z: 0.0,
+      },
+      {
         x: -0.3,
-        z: 0.7
-      });
-
+        z: 0.7,
+      }
+    );
   }
 
   animateOut() {
     TweenMax.to(this._torus.material, 0.6, {
-      opacity: 0
+      opacity: 0,
     });
 
     TweenMax.to(this._torus.scale, 0.6, {
       x: 0.8,
       y: 0.8,
-      z: 0.8
+      z: 0.8,
     });
     TweenMax.to(this._torus.position, 0.6, {
       x: 10,
-      y: 20
+      y: 20,
     });
     TweenMax.to(this._torus.rotation, 0.6, {
       x: 2.0,
-      y: -0.3
+      y: -0.3,
     });
 
     TweenMax.to(this._sphere.scale, 0.6, {
       x: 0.8,
       y: 0.8,
-      z: 0.8
+      z: 0.8,
     });
     TweenMax.to(this._sphere.position, 0.6, {
       x: -10,
-      y: -10
+      y: -10,
     });
 
     TweenMax.to(this._cone.scale, 0.6, {
       x: 0.8,
       y: 0.8,
-      z: 0.8
+      z: 0.8,
     });
     TweenMax.to(this._cone.position, 0.6, {
       x: -30,
       y: 2,
-      z: 3
+      z: 3,
     });
     TweenMax.to(this._cone.rotation, 0.6, {
       x: -0.2,
-      z: 0.0
+      z: 0.0,
     });
   }
 
   bind() {
-    window.addEventListener('resize', this.resize.bind(this), false);
-    document.body.addEventListener("mousemove", this.onMouseMove.bind(this), false);
+    window.addEventListener("resize", this.resize.bind(this), false);
+    document.body.addEventListener(
+      "mousemove",
+      this.onMouseMove.bind(this),
+      false
+    );
 
     document.querySelector("a").addEventListener("mouseenter", () => {
       TweenMax.to(".ok", 0.6, {
-        scale: 1.35
+        scale: 1.35,
       });
       this.animateIn();
     });
 
     document.querySelector("a").addEventListener("mouseleave", () => {
       TweenMax.to(".ok", 0.6, {
-        scale: 1.0
+        scale: 1.0,
       });
       this.animateOut();
     });
-
   }
 
   onMouseMove(event) {
-    this.mouse.x = event.clientX / window.innerWidth * 2 - 1;
+    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   }
 
@@ -275,9 +295,12 @@ class Experience {
 
     if (delta > this.fpsInterval) {
       // this.scene.update()
-      this.camera.position.x += this.mouse.x * (window.innerWidth * 0.02) - this.camera.position.x * 0.03;
+      this.camera.position.x +=
+        this.mouse.x * (window.innerWidth * 0.02) -
+        this.camera.position.x * 0.03;
       this.camera.position.y +=
-        -(this.mouse.y * (window.innerHeight * 0.02)) - this.camera.position.y * 0.03;
+        -(this.mouse.y * (window.innerHeight * 0.02)) -
+        this.camera.position.y * 0.03;
       this.camera.lookAt(this.scene.position);
 
       this.renderer.render(this.scene, this.camera);
@@ -288,14 +311,11 @@ class Experience {
   resize() {
     //     this.innerWidth = window.innerWidth
     //     this.innerHeight = window.innerHeight
-
     //     this.camera.aspect = this.innerWidth / this.innerHeight
     //     this.camera.updateProjectionMatrix()
-
     //     this.renderer.setSize( this.innerWidth, this.innerHeight )
   }
 }
 
-
-const container = document.querySelector('.home');
+const container = document.querySelector(".home");
 let experience = new Experience(container, 400, 300);
