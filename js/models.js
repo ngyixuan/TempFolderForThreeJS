@@ -125,7 +125,7 @@ engine.add(lineGenerator);
 lineGenerator.start();
 
 //添加飞星
-engine.addSphere();
+// engine.addSphere();
 engine.start();
 
 //延时加载
@@ -142,7 +142,7 @@ setTimeout(() => {
   let size = 1;
   text.scale.set(size, size, size);
   text.position.x -= text.basePosition * 0.5;
-  engine.add(text);
+  // engine.add(text);
 
   const tlShow = new TimelineLite({
     delay: 0.2,

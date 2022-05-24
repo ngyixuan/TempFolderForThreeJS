@@ -3,24 +3,90 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="http://unpkg.com/iview/dist/styles/iview.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script
+      type="text/javascript"
+      src="http://unpkg.com/iview/dist/iview.min.js"
+    ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
 
   <body>
-    <div class="home">
+    <!-- <div class="home">
       <a id="div_play" href="#">
         <span>前去购买</span>
       </a>
       <span class="ok">前去购买</span>
+
+    </div> -->
+
+    <div id="app">
+      <div class="flex justify-between m-40">
+        <div><img src="./static/text/website-logo.svg" alt="" /></div>
+        <div class="flex">
+          <div>Home</div>
+          <div>Store</div>
+          <div>About</div>
+        </div>
+      </div>
+      <div class="flex justify-center content-center">
+        <div class="flex mr-32">
+          <img src="./static/text/unlockMetaverse.svg" alt="" />
+        </div>
+        <div class="flex flex-row">
+          <div class="grid grid-rows-3">
+            <img src="./static/icon/rb-pixel/yellowPeople.svg" alt="" />
+            <img src="./static/icon/rb-pixel/orangePeople.svg" alt="" />
+            <img src="./static/icon/rb-pixel/yellowPeople.svg" alt="" />
+          </div>
+          <div class="grid grid-rows-3">
+            <img src="./static/icon/rb-pixel/yellowPeople.svg" alt="" />
+            <img src="./static/icon/rb-pixel/orangePeople.svg" alt="" />
+            <img src="./static/icon/rb-pixel/yellowPeople.svg" alt="" />
+          </div>
+          <div class="grid grid-rows-3">
+            <img src="./static/icon/rb-pixel/yellowPeople.svg" alt="" />
+            <img src="./static/icon/rb-pixel/orangePeople.svg" alt="" />
+            <img src="./static/icon/rb-pixel/yellowPeople.svg" alt="" />
+          </div>
+        </div>
+      </div>
     </div>
     <div class="overlay"></div>
-
-    <script src="./libs/jquery-1.10.2.min.js"></script>
-
-    <script src="./libs/three/build/three.min.js"></script>
-    <script src="./js/planetButton.js"></script>
-    <script src="./libs/three.meshline/src/THREE.MeshLine.js"></script>
-    <script src="./libs/postprocessing/build/postprocessing.js"></script>
-
-    <script type="module" src="./js/models.js"></script>
   </body>
 </html>
+
+<script src="./libs/jquery-1.10.2.min.js"></script>
+<script src="./libs/three/build/three.min.js"></script>
+<!-- <script src="./js/planetButton.js"></script> -->
+<script src="./libs/three.meshline/src/THREE.MeshLine.js"></script>
+<script src="./libs/postprocessing/build/postprocessing.js"></script>
+<script type="module" src="./js/models.js"></script>
+<script>
+  new Vue({
+    el: "#app",
+    data: {
+      visible: false,
+    },
+    methods: {
+      show: function () {
+        this.visible = true;
+      },
+    },
+  });
+</script>
+<style>
+  #app {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    color: white;
+  }
+</style>
