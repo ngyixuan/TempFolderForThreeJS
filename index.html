@@ -8,6 +8,11 @@
       type="text/css"
       href="http://unpkg.com/iview/dist/styles/iview.css"
     />
+    <link href="http://fonts.cdnfonts.com/css/common-pixel" rel="stylesheet" />
+    <link
+      href="http://fonts.cdnfonts.com/css/lvdc-common-pix2"
+      rel="stylesheet"
+    />
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
     <script
       type="text/javascript"
@@ -26,19 +31,45 @@
     </div> -->
 
     <div id="app">
-      <div class="flex justify-between m-40">
-        <div><img src="./static/text/website-logo.svg" alt="" /></div>
-        <div class="flex">
-          <div>Home</div>
-          <div>Store</div>
-          <div>About</div>
+      <div class="flex justify-between m-40 items-center">
+        <div><img src="./static/text/website-logo.svg " alt="" /></div>
+        <div class="flex items-center ">
+          <div class="h-20 w-64 text-4xl hover:animate-bounce"><a href="./index.html">Home</a> </div>
+          <div class="h-20 w-64 text-4xl hover:animate-bounce"><a href="./store.html">Store</a></div>
+          <div class="h-20 w-64 text-4xl hover:animate-bounce"><a href="#">About</a></div>
+          <div><img src="./static/icon/rb-pixel/search-bar.svg" alt="" /></div>
         </div>
       </div>
-      <div class="flex justify-center content-center">
-        <div class="flex mr-32">
-          <img src="./static/text/unlockMetaverse.svg" alt="" />
+
+      <!-- 左侧标题 -->
+      <div class="flex justify-between mt-30 m-40 w-1/2">
+        <div class="flex mr-32 flex-col flex justify-start">
+          <div class="mb-8">
+            <!-- <img src="./static/text/unlockMetaverse.svg" alt="" /> -->
+            <p class="title">
+              UNLOCK <br />
+              METAVERSE
+            </p>
+          </div>
+          <div class="mb-16 text-7xl">
+            <img src="./static/text/intro-h2.svg" alt="" />
+            <!-- <p>REAL WORLD ENTRY TICKET</p> -->
+          </div>
+          <div class="mb-16 content">
+            <!-- <img src="./static/text/intro-content.svg" alt="" /> -->
+            <p >
+              Metaverse ID cards are the kets to accessing the Metaverse,
+            </p>
+            <p>it roles as value carriers that bridge the digital and the real worlds.</p>
+            <p> We thinks it's supposed to demystify metaverse and hopes to</p>
+            <p> bring the texhnology to massess. Therefore this Metaverse entry card</p>
+            <p> could be the perfect start point for people to enjoy inside metaverse.</p>
+          </div>
+          <div class="mb-16 hover:animate-pulse" >
+            <a href="./store.html"><img src="./static/icon/button/start-button.svg" alt="" /></a>
+          </div>
         </div>
-        <div class="flex flex-row">
+        <!-- <div class="flex flex-row ">
           <div class="grid grid-rows-3">
             <img src="./static/icon/rb-pixel/yellowPeople.svg" alt="" />
             <img src="./static/icon/rb-pixel/orangePeople.svg" alt="" />
@@ -54,7 +85,7 @@
             <img src="./static/icon/rb-pixel/orangePeople.svg" alt="" />
             <img src="./static/icon/rb-pixel/yellowPeople.svg" alt="" />
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="overlay"></div>
@@ -81,6 +112,20 @@
   });
 </script>
 <style>
+  html {
+    cursor: url(./static/icon/cursor/cursorYellow\ 1.svg), auto;
+  }
+  .cursor{
+    cursor: url(./static/icon/cursor/cursorYellow\ 1.svg), auto;
+  }
+  br {
+    display: block;
+    font-size: 2px;
+    line-height: 2px;
+  }
+  body {
+    font-family: "Common Pixel";
+  }
   #app {
     margin: 0 auto;
     display: flex;
@@ -89,4 +134,97 @@
     flex-direction: column;
     color: white;
   }
+  .title {
+    font-size: 10rem;
+    line-height: 9rem;
+  }
+  .content{
+    height: 14rem;
+  }
+  .content p{
+    font-family: "LVDC Common Pix2", sans-serif;
+    white-space: nowrap;
+ 
+  overflow: hidden;
+  font-size: 1.875rem; /* 30px */
+line-height: 2.25rem; /* 36px */
+  }
+
+  .content p:nth-child(1) {
+  width: 100%;
+  animation: type 2s steps(40, end);
+  animation-fill-mode: forwards;
+}
+
+.content p:nth-child(2) {
+  width: 100%;
+  opacity: 0;
+  animation: type2 2s steps(40, end);
+  animation-delay: 2s;
+  animation-fill-mode: forwards;
+}
+
+.content p:nth-child(3) {
+  width: 100%;
+  opacity: 0;
+  animation: type2 2s steps(40, end), blink .5s step-end infinite alternate;
+  animation-delay: 4s;
+  animation-fill-mode: forwards;
+}
+
+
+.content p:nth-child(4) {
+  width: 100%;
+  opacity: 0;
+  animation: type2 2s steps(40, end), blink .5s step-end infinite alternate;
+  animation-delay: 6s;
+  animation-fill-mode: forwards;
+}
+
+.content p:nth-child(5) {
+  width: 100%;
+  opacity: 0;
+  animation: type2 2s steps(40, end), blink .5s step-end infinite alternate;
+  animation-delay: 8s;
+  animation-fill-mode: forwards;
+}
+
+
+
+@keyframes type {
+  0% {
+    width: 0;
+  }
+  99.9% {
+    border-right: .15em solid orange;
+  }
+  100% {
+    border: none;
+  }
+}
+
+@keyframes type2 {
+  0% {
+    width: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+  99.9% {
+    border-right: .15em solid orange;
+  }
+  100% {
+    opacity: 1;
+    border: none;
+  }
+}
+
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}
+
+
+ 
 </style>

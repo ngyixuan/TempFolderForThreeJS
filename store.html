@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="http://unpkg.com/iview/dist/styles/iview.css"
+    />
+    <link href="http://fonts.cdnfonts.com/css/common-pixel" rel="stylesheet" />
+    <link
+      href="http://fonts.cdnfonts.com/css/lvdc-common-pix2"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script
+      type="text/javascript"
+      src="http://unpkg.com/iview/dist/iview.min.js"
+    ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body>
+    <!-- <div class="home">
+      <a id="div_play" href="#">
+        <span>前去购买</span>
+      </a>
+      <span class="ok">前去购买</span>
+
+    </div> -->
+
+    <div id="app">
+      <div class="flex justify-between mx-40 mt-40 items-center">
+        <div><img src="./static/text/website-logo.svg " alt="" /></div>
+        <div class="flex items-center ">
+          <div class="h-20 w-64 text-4xl hover:animate-bounce"><a href="./index.html">Home</a> </div>
+          <div class="h-20 w-64 text-4xl hover:animate-bounce"><a href="./store.html">Store</a></div>
+          <div class="h-20 w-64 text-4xl hover:animate-bounce"><a href="#">About</a></div>
+          <div><img src="./static/icon/rb-pixel/search-bar.svg" alt="" /></div>
+        </div>
+      </div>
+      <div class="mx-auto mt-20 pixel-border">
+        <img class="" src="./static/icon/border/pixel-frame-large.svg" alt="">
+      </div>
+</div>
+     
+    <div class="overlay"></div>
+  </body>
+</html>
+
+<script src="./libs/jquery-1.10.2.min.js"></script>
+<script src="./libs/three/build/three.min.js"></script>
+<!-- <script src="./js/planetButton.js"></script> -->
+<script src="./libs/three.meshline/src/THREE.MeshLine.js"></script>
+<script src="./libs/postprocessing/build/postprocessing.js"></script>
+<script type="module" src="./js/models.js"></script>
+<script>
+  new Vue({
+    el: "#app",
+    data: {
+      visible: false,
+    },
+    methods: {
+      show: function () {
+        this.visible = true;
+      },
+    },
+  });
+</script>
+<style>
+  html {
+    cursor: url(./static/icon/cursor/cursorYellow\ 1.svg), auto;
+  }
+  .cursor{
+    cursor: url(./static/icon/cursor/cursorYellow\ 1.svg), auto;
+  }
+  br {
+    display: block;
+    font-size: 2px;
+    line-height: 2px;
+  }
+  body {
+    font-family: "Common Pixel";
+  }
+  #app {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    color: white;
+  }
+
+.pixel-border{
+  width: 1890px;
+  height: 600px;
+  
+
+}
+
+
+ 
+</style>
