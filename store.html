@@ -22,29 +22,51 @@
   </head>
 
   <body>
-    <!-- <div class="home">
-      <a id="div_play" href="#">
-        <span>前去购买</span>
-      </a>
-      <span class="ok">前去购买</span>
-
-    </div> -->
-
     <div id="app">
       <div class="flex justify-between mx-40 mt-40 items-center">
         <div><img src="./static/text/website-logo.svg " alt="" /></div>
-        <div class="flex items-center ">
-          <div class="h-20 w-64 text-4xl hover:animate-bounce"><a href="./index.html">Home</a> </div>
-          <div class="h-20 w-64 text-4xl hover:animate-bounce"><a href="./store.html">Store</a></div>
-          <div class="h-20 w-64 text-4xl hover:animate-bounce"><a href="#">About</a></div>
+        <div class="flex items-center">
+          <div class="h-20 w-64 text-4xl hover:animate-bounce">
+            <a href="./index.html">Home</a>
+          </div>
+          <div class="h-20 w-64 text-4xl hover:animate-bounce">
+            <a href="./store.html">Store</a>
+          </div>
+          <div class="h-20 w-64 text-4xl hover:animate-bounce">
+            <a href="#">About</a>
+          </div>
           <div><img src="./static/icon/rb-pixel/search-bar.svg" alt="" /></div>
         </div>
       </div>
-      <div class="mx-auto mt-20 pixel-border">
-        <img class="" src="./static/icon/border/pixel-frame-large.svg" alt="">
+      <div class="relative mx-auto mt-20 pixel-border ">
+        <img
+          class="absolute top-29"
+          src="./static/icon/border/pixel-frame-large.svg"
+          alt=""
+        />
+        <p class="text-5xl text-center mt-20">CHOOSE A PIXEL</p>
+
+        <div class="flex mt-20 justify-center">
+          <div class=" flex flex-col pixel-card mr-28">
+            <div class="mx-auto mt-3.5 w-56 h-56 bg-slate-200"><img src="" alt=""></div>
+            <div class="flex m-10 justify-between items-center"><p class="text-3xl text-black ">#12031</p><div class="w-20 h-4 rounded-3xl bg-yellow-400"></div></div>
+            <div ><img class="h-12" src="./static/icon/button/purchase-button-click.svg" alt=""></div>
+          </div>
+          <div class="pixel-card mr-28"> card2</div>
+          <div class="pixel-card mr-28"> card3</div>
+          <div class="pixel-card mr-28"> card4</div>
+          <div class="pixel-card"> card5</div>
+        </div>
+        <div class="flex mt-20 justify-center">
+          <div class="pixel-card mr-28"> card1</div>
+          <div class="pixel-card mr-28"> card2</div>
+          <div class="pixel-card mr-28"> card3</div>
+          <div class="pixel-card mr-28"> card4</div>
+          <div class="pixel-card"> card5</div>
+        </div>
       </div>
-</div>
-     
+    </div>
+
     <div class="overlay"></div>
   </body>
 </html>
@@ -69,36 +91,33 @@
   });
 </script>
 <style>
-  html {
-    cursor: url(./static/icon/cursor/cursorYellow\ 1.svg), auto;
-  }
-  .cursor{
-    cursor: url(./static/icon/cursor/cursorYellow\ 1.svg), auto;
-  }
-  br {
-    display: block;
-    font-size: 2px;
-    line-height: 2px;
-  }
-  body {
-    font-family: "Common Pixel";
-  }
-  #app {
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    flex-direction: column;
-    color: white;
-  }
+    html {
+      cursor: url(./static/icon/cursor/cursorYellow\ 1.svg), auto;
+    }
+    br {
+      display: block;
+      font-size: 2px;
+      line-height: 2px;
+    }
+    body {
+      font-family: "Common Pixel";
+    }
+    #app {
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      flex-direction: column;
+      color: white;
+    }
 
-.pixel-border{
-  width: 1890px;
-  height: 600px;
-  
-
-}
-
-
- 
+  .pixel-border{
+    width: 1890px;
+    height: 600px;
+  }
+  .pixel-card{
+    height: 249px ;
+    width:203px ;
+    background: white;
+  }
 </style>
