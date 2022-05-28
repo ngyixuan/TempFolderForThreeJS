@@ -19,55 +19,178 @@
       src="http://unpkg.com/iview/dist/iview.min.js"
     ></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    
   </head>
 
-  <body>
+  <body class="relative">
     <div id="app">
-      <div class="flex justify-between mx-40 mt-40 items-center">
+      <div class="flex justify-between p-20 items-center">
         <div><img src="./static/text/website-logo.svg " alt="" /></div>
         <div class="flex items-center">
-          <div class="h-20 w-64 text-4xl hover:animate-bounce">
+          <div class="h-10 w-40 text-2xl hover:animate-bounce">
             <a href="./index.html">Home</a>
           </div>
-          <div class="h-20 w-64 text-4xl hover:animate-bounce">
+          <div class="h-10 w-40 text-2xl hover:animate-bounce">
             <a href="./store.html">Store</a>
           </div>
-          <div class="h-20 w-64 text-4xl hover:animate-bounce">
+          <div class="h-10 w-40 text-2xl hover:animate-bounce">
             <a href="#">About</a>
           </div>
           <div><img src="./static/icon/rb-pixel/search-bar.svg" alt="" /></div>
         </div>
       </div>
-      <div class="relative mx-auto mt-20 pixel-border ">
-        <img
-          class="absolute top-29"
-          src="./static/icon/border/pixel-frame-large.svg"
-          alt=""
-        />
-        <p class="text-5xl text-center mt-20">CHOOSE A PIXEL</p>
-
-        <div class="flex mt-20 justify-center">
-          <div class=" flex flex-col pixel-card mr-28">
-            <div class="mx-auto mt-3.5 w-56 h-56 bg-slate-200"><img src="" alt=""></div>
-            <div class="flex m-10 justify-between items-center"><p class="text-3xl text-black ">#12031</p><div class="w-20 h-4 rounded-3xl bg-yellow-400"></div></div>
-            <div ><img class="h-12" src="./static/icon/button/purchase-button-click.svg" alt=""></div>
-          </div>
-          <div class="pixel-card mr-28"> card2</div>
-          <div class="pixel-card mr-28"> card3</div>
-          <div class="pixel-card mr-28"> card4</div>
-          <div class="pixel-card"> card5</div>
+      <div v-show="store"> 
+      
+        <div class="relative mx-auto pt-10 pixel-border">
+          <p class="text-3xl text-center pt-1">CHOOSE A PIXEL</p>
+          <img
+            class="absolute top-0"
+            src="./static/icon/border/pixel-frame-large.svg"
+            alt=""
+          />
         </div>
-        <div class="flex mt-20 justify-center">
-          <div class="pixel-card mr-28"> card1</div>
-          <div class="pixel-card mr-28"> card2</div>
-          <div class="pixel-card mr-28"> card3</div>
-          <div class="pixel-card mr-28"> card4</div>
-          <div class="pixel-card"> card5</div>
+  
+        <div class="absolute z-2 top-1/3 pixel-card-left">
+          <div class="flex justify-center card">
+            <div
+              class="pixel-last flex flex-col pixel-card mr-28 p-3 items-center"
+              v-for="(item,index) in items"
+            >
+              <img :src="item.profileImg" alt="" />
+              <div class="flex py-1 px-3 justify-between items-center">
+                <p class="text-3xl text-black pr-3">#12031</p>
+                <div class="w-20 h-3 rounded-3xl bg-yellow-400"></div>
+              </div>
+              <div
+                @mouseover="changeImg(item)"
+                @mouseleave="changeImg(item)"
+                class="hover:animate-bounce"
+              >
+                <img
+                  @click="openModel(item,index)"
+                  v-if="item.hover"
+                  src="./static/icon/button/purchase-button-green.svg"
+                  alt=""
+                />
+                <img
+                  v-else
+                  src="./static/icon/button/purchase-button-purple.svg"
+                  alt=""
+                />
+              </div>
+            
+                <Modal
+                v-model="item.model"
+                title="Choose Your Payment Methods"
+                :loading="item.loading"
+                @on-ok="asyncOK(item,index)"
+                on-cancel="item.modal=false"
+              > 
+              
+       
+                <Radio-group v-model="phone">
+                    <Radio label="apple">
+                        <Icon type="social-apple"></Icon>
+                        <span>WeChatPay</span>
+                      
+
+                    </Radio>
+                    <Radio label="ali">
+                      <Icon type="social-apple"></Icon>
+                      <span>AliPay</span>
+                  </Radio>
+                    <Radio label="android">
+                        <Icon type="social-android"></Icon>
+                        <span>CreditCard</span>
+                    </Radio>
+                    <Radio label="windows">
+                        <Icon type="social-windows"></Icon>
+                        <span>DebitCard</span>
+                    </Radio>
+                    <img v-if="phone=='apple'" src="./static/icon/payment/wechatpay.svg" alt="">
+                    <img v-if="phone=='ali'" src="./static/icon/payment/aplipay.svg" alt="">
+                    <template v-if="phone=='android'">
+                      <div class="border mt-5 py-3 px-4">  <Input  type="text" v-model="cardName" placeholder="Credit Card Holder Name" style="width: 300px"></Input></div>
+                      <br>
+                      <div class="border mt-5 py-3 px-4"> <Input  type="text" v-model="cardNum" placeholder="Credit Card Holder Name" style="width: 300px"></Input></div>
+                      <br>
+                      <div class=" flex justify-between">
+                         <Input class="border mt-5   py-3 px-4" type="text" v-model="cardYear" placeholder="MM/YY" style="width: 200px"></Input>
+                         <Input class="border mt-5 py-3 px-4" type="password" v-model="cardCV" placeholder="000" style="width: 200px"></Input>
+                        </div>
+                        
+                      
+
+
+                    </template>
+                    <template v-if="phone=='windows'">
+                      <div class="border mt-5 py-3 px-4">  <Input  type="text" v-model="cardName" placeholder="Debit Card Holder Name" style="width: 300px"></Input></div>
+                      <br>
+                      <div class="border mt-5 py-3 px-4"> <Input  type="text" v-model="cardNum" placeholder="Debit Card Holder Name" style="width: 300px"></Input></div>
+                      <br>
+                      <div class=" flex justify-between">
+                         <Input class="border mt-5   py-3 px-4" type="text" v-model="cardYear" placeholder="MM/YY" style="width: 200px"></Input>
+                         <Input class="border mt-5 py-3 px-4" type="password" v-model="cardCV" placeholder="000" style="width: 200px"></Input>
+                        </div>
+                        
+                      
+
+
+                    </template>
+                   
+                </Radio-group>
+             
+          
+             
+              </Modal>
+             
+       
+           
+            </div>
+          </div>
+          <div class="flex mt-10 justify-center">
+            <div
+              class="pixel-last flex flex-col pixel-card mr-28 p-3 items-center"
+              v-for="(item,index) in item2"
+            >
+              <img :src="item.profileImg" alt="" />
+              <div class="flex py-1 px-3 justify-between items-center">
+                <p class="text-3xl text-black pr-3">#12031</p>
+                <div class="w-20 h-3 rounded-3xl bg-yellow-400"></div>
+              </div>
+              <div
+                @mouseover="changeImg(item)"
+                @mouseleave="changeImg(item)"
+                class="hover:animate-bounce"
+              >
+                <img
+                  v-if="item.hover"
+                  src="./static/icon/button/purchase-button-green.svg"
+                  alt=""
+                />
+                <img
+                  v-else
+                  src="./static/icon/button/purchase-button-purple.svg"
+                  alt=""
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+      <div v-show="cardPage">
+          <div class="flex flex-col relative items-center justify-center">
+            <img class=" identity-card-border" src="./static/icon/border/identity-card-border2.svg" alt="">
+            <div class="absolute bottom-80 left-1/3 bg-white p-6"><img class="" src="./static/icon/rb-pixel/bg-brown-people.svg" alt=""> </div>
+            <div ><img class="mt-7 download-button" src="./static/icon/button/download-button.svg"></div>
+          </div>
+      </div>
+
+   
+      
+    <div class="overlay"></div>
     </div>
 
-    <div class="overlay"></div>
   </body>
 </html>
 
@@ -81,43 +204,224 @@
   new Vue({
     el: "#app",
     data: {
+      cardProfile:'',
+      cardName:'',
+      cardNum:'',
+      cardYear:'',
+      cardCV:null,
+      model:false,
+      store:false,
+      phone: 'apple',
       visible: false,
+      cardPage:true,
+      items: {
+        first: {
+          profileImg:'./static/icon/rb-pixel/bg-brown-people.svg',
+          model: false,
+          loading: true,
+          hover: false,
+          img: {
+            pictureStatic: "./static/icon/button/purchase-button-purple.svg",
+            pictureGif: "./static/icon/button/purchase-button-green.svg",
+          },
+        },
+        second: {
+          profileImg:'./static/icon/rb-pixel/bg-skyblue-people.svg',
+          model: false,
+          loading: true,
+          hover: false,
+          img: {
+            pictureStatic: "./static/icon/button/purchase-button-purple.svg",
+            pictureGif: "./static/icon/button/purchase-button-green.svg",
+          },
+        },
+        third: {
+          profileImg:'./static/icon/rb-pixel/bg-red-people.svg',
+          model: false,
+          loading: true,
+          hover: false,
+          img: {
+            pictureStatic: "./static/icon/button/purchase-button-purple.svg",
+            pictureGif: "./static/icon/button/purchase-button-green.svg",
+          },
+        },
+        fourth: {
+          profileImg:'./static/icon/rb-pixel/bg-pink-people.svg',
+          model: false,
+          loading: true,
+          hover: false,
+          img: {
+            pictureStatic: "./static/icon/button/purchase-button-purple.svg",
+            pictureGif: "./static/icon/button/purchase-button-green.svg",
+          },
+        },
+        fifth: {
+          profileImg:'./static/icon/rb-pixel/bg-orange-people.svg',
+          model: false,
+          loading: true,
+          hover: false,
+          img: {
+            pictureStatic: "./static/icon/button/purchase-button-purple.svg",
+            pictureGif: "./static/icon/button/purchase-button-green.svg",
+          },
+        },
+      },
+
+      item2: {
+        first: {
+          model: false,
+          loading: true,
+          hover: false,
+          img: {
+            pictureStatic: "./static/icon/button/purchase-button-purple.svg",
+            pictureGif: "./static/icon/button/purchase-button-green.svg",
+          },
+        },
+        second: {
+          model: false,
+          loading: true,
+          hover: false,
+          img: {
+            pictureStatic: "./static/icon/button/purchase-button-purple.svg",
+            pictureGif: "./static/icon/button/purchase-button-green.svg",
+          },
+        },
+        third: {
+          model: false,
+          loading: true,
+          hover: false,
+          img: {
+            pictureStatic: "./static/icon/button/purchase-button-purple.svg",
+            pictureGif: "./static/icon/button/purchase-button-green.svg",
+          },
+        },
+        fourth: {
+          model: false,
+          loading: true,
+          hover: false,
+          img: {
+            pictureStatic: "./static/icon/button/purchase-button-purple.svg",
+            pictureGif: "./static/icon/button/purchase-button-green.svg",
+          },
+        },
+        fifth: {
+          model: false,
+          loading: true,
+          hover: false,
+          img: {
+            pictureStatic: "./static/icon/button/purchase-button-purple.svg",
+            pictureGif: "./static/icon/button/purchase-button-green.svg",
+          },
+        },
+      },
     },
     methods: {
       show: function () {
         this.visible = true;
       },
+      changeImg(item) {
+        console.log(item.hover);
+        item.hover = !item.hover;
+        if (item.hover == true) {
+          return item.img.pictureGif;
+        } else {
+          return item.img.pictureStatic;
+        }
+      },
+      openModel(item,index){
+        console.log(index)
+        item.model=true;
+       
+      },
+       asyncOK(item) {
+        console.log(item);
+        // this.modal = false;
+        setTimeout(() => {
+          console.log(item)
+          item.model= false;
+          this.store=!this.store;
+          this.cardPage=!this.cardPage;
+          this.cardProfile = item.profileImg
+          // console.log(item.modal);
+         
+        }, 2000);
+      },
+    },
+    computed: {
+      // asyncOK(item) {
+      //   console.log("ok");
+      //   setTimeout(() => {
+      //     item.modal = false;
+      //     console.log(item.modal);
+      //   }, 2000);
+      // },
+      // changeImg(item) {
+      //   console.log(item);
+        // if (item.hover == true) {
+        //   return item.img.pictureGif
+        // } else {
+        //   return item.img.pictureStatic
+        // }
+      // },
     },
   });
 </script>
 <style>
-    html {
-      cursor: url(./static/icon/cursor/cursorYellow\ 1.svg), auto;
-    }
-    br {
-      display: block;
-      font-size: 2px;
-      line-height: 2px;
-    }
-    body {
-      font-family: "Common Pixel";
-    }
-    #app {
-      margin: 0 auto;
-      display: flex;
-      justify-content: center;
-      align-content: center;
-      flex-direction: column;
-      color: white;
-    }
-
-  .pixel-border{
-    width: 1890px;
-    height: 600px;
+  canvas {
+    z-index: -99 !important;
   }
-  .pixel-card{
-    height: 249px ;
-    width:203px ;
+  html {
+    cursor: url(./static/icon/cursor/cursorYellow.svg), auto;
+  }
+  br {
+    display: block;
+    font-size: 2px;
+    line-height: 2px;
+  }
+  body {
+    font-family: "Common Pixel";
+  }
+  #app {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    color: white;
+  }
+
+  .pixel-border {
+    width: 1200px;
+    height: 500px;
+  }
+  .card {
+    z-index: 99;
+  }
+  .pixel-card {
+    height: 179px;
+    width: 133px;
     background: white;
   }
+
+  .pixel-card-left {
+    left: 28.5rem;
+  }
+
+  div .pixel-last:last-child {
+    margin-right: 0;
+  }
+  .ivu-modal-footer button+button {
+    border-color: #cfd2d7;
+    color: #6a7282;
+  }
+
+  .ivu-modal-footer button+button:hover{
+    color: white;
+    border-color: white;
+    background-color: #6a7282;
+  }
+  .identity-card-border{
+    width: 750px;
+  }
+
 </style>

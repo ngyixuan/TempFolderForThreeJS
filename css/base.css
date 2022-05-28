@@ -13,7 +13,9 @@ body, html, main, .frame{
  width: 100%;
  height: 100%;
 }
-
+canvas{
+    z-index: -99 !important;
+  }
 body {
 	position: fixed;
 	top: 0;
