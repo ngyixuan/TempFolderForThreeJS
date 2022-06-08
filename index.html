@@ -58,17 +58,45 @@
           <div class="mb-16 content">
             <!-- <img src="./static/text/intro-content.svg" alt="" /> -->
             <p >
-              Metaverse ID cards are the kets to accessing the Metaverse,
+              Metaverse ID cards are the keys to accessing the Metaverse,
             </p>
             <p>it roles as value carriers that bridge the digital and the real worlds.</p>
             <p> We thinks it's supposed to demystify metaverse and hopes to</p>
             <p> bring the texhnology to massess. Therefore this Metaverse entry card</p>
             <p> could be the perfect start point for people to enjoy inside metaverse.</p>
           </div>
-          <div class=" hover:animate-pulse" >
+          <div class="hover:animate-bounce animate-pulse" >
             <a href="./store.html"><img src="./static/icon/button/start-button.svg" alt="" /></a>
           </div>
         </div>
+        <div class="flex flex-col flex justify-end mr-20 box-border">
+       <div class="flex flex-row">
+        <img class="p-3" src="./static/card/flex1.svg" alt="" />
+        <img class="p-3"  src="./static/card/flex2.svg" alt="" />
+        <img class="p-3"  src="./static/card/flex3.svg" alt="" />
+       </div>
+       <div class="flex flex-row ">
+        <img class="p-3" src="./static/card/flex4.svg" alt="" />
+        <img class="p-3"  src="./static/card/flex5.svg" alt="" />
+        <img class="p-3"  src="./static/card/flex6.svg" alt="" />
+       </div>
+       <div class="flex flex-row ">
+        <img class="p-3 hover:animate-pulse" src="./static/card/flex7.svg" alt="" />
+        <img class="p-3 hover:animate-pulse"  src="./static/card/flex8.svg" alt="" />
+        <img class="p-3"  src="./static/card/flex9.svg" alt="" />
+       </div>
+         
+ 
+            <!-- <img src="./static/icon/rb-pixel/yellowPeople.svg" alt="" />
+            <img src="./static/icon/rb-pixel/orangePeople.svg" alt="" />
+            <img src="./static/icon/rb-pixel/yellowPeople.svg" alt="" />
+
+            <img src="./static/icon/rb-pixel/yellowPeople.svg" alt="" />
+            <img src="./static/icon/rb-pixel/orangePeople.svg" alt="" />
+            <img src="./static/icon/rb-pixel/yellowPeople.svg" alt="" /> -->
+       
+        </div>
+
         <!-- <div class="flex flex-row ">
           <div class="grid grid-rows-3">
             <img src="./static/icon/rb-pixel/yellowPeople.svg" alt="" />
@@ -112,11 +140,16 @@
   });
 </script>
 <style>
-  html {
-    cursor: url(./static/icon/cursor/cursorYellow\ 1.svg), auto;
+  .moveAnimation{
+    animation: move 5s linear infinite;
+
   }
-  .cursor{
-    cursor: url(./static/icon/cursor/cursorYellow\ 1.svg), auto;
+  @keyframes move{}
+  canvas {
+    z-index: -99 !important;
+  }
+  html {
+    cursor: url(./static/icon/cursor/cursorYellow.svg), auto;
   }
   br {
     display: block;
